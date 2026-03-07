@@ -143,7 +143,7 @@ oauthRoutes.post("/consent", async (c) => {
     userId: string;
     partnerId: string;
     redirectUri: string;
-    state: string;
+    state: string | undefined;
   }>(`oauth_consent:${consentToken}`);
 
   if (!stored) {
@@ -208,6 +208,10 @@ oauthRoutes.post("/token", async (c) => {
     return c.json({ error: "invalid_grant" }, 400);
   }
 
+  if (stored.partnerId !== partner.id) {
+    return c.json({ error: "invalid_grant" }, 400);
+  }
+
   // 6. Delete immediately — single-use enforcement
   await redis.del(`oauth_code:${code}`);
 
@@ -252,6 +256,16 @@ oauthRoutes.post("/token", async (c) => {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
+/** Escapes HTML special characters to prevent XSS. */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 async function issueAuthCode(c: Context, userId: string, partnerId: string, redirectUri: string, state: string) {
   const code = generateAuthCode();
   await redis.set(
@@ -271,7 +285,7 @@ function consentPage(partnerName: string, consentToken: string): string {
 <head><meta charset="UTF-8"><title>CAGE — Share Age Verification</title></head>
 <body>
   <h1>Share your age verification</h1>
-  <p><strong>${partnerName}</strong> is requesting confirmation of your age verification.</p>
+  <p><strong>${escapeHtml(partnerName)}</strong> is requesting confirmation of your age verification.</p>
   <p>CAGE will share only that you are age-verified and your age bracket. No other personal information is shared.</p>
   <form method="POST" action="/oauth/consent">
     <input type="hidden" name="consent_token" value="${consentToken}" />

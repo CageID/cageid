@@ -165,6 +165,28 @@ describe('POST /oauth/token', () => {
     expect(body.error).toBe('invalid_grant');
   });
 
+  it('returns 400 invalid_grant when auth code was issued for a different partner', async () => {
+    vi.mocked(findActivePartner).mockResolvedValue(mockPartner); // partner-uuid
+    vi.mocked(validateClientSecret).mockResolvedValue(true);
+    vi.mocked(redis.get).mockResolvedValue({
+      ...storedCode,
+      partnerId: 'different-partner-uuid', // code was issued for a different partner
+    });
+    vi.mocked(redis.del).mockResolvedValue(1);
+    const app = makeApp();
+    const res = await app.fetch(tokenRequest({
+      grant_type: 'authorization_code',
+      client_id: 'partner-uuid',
+      client_secret: 'correct-secret',
+      code: 'stolen-code',
+    }));
+    expect(res.status).toBe(400);
+    const body = await res.json() as Record<string, string>;
+    expect(body.error).toBe('invalid_grant');
+    // Code should NOT be deleted when partner mismatch is detected
+    expect(vi.mocked(redis.del)).not.toHaveBeenCalled();
+  });
+
   it('returns the ID token on a valid exchange and deletes the auth code', async () => {
     vi.mocked(findActivePartner).mockResolvedValue(mockPartner);
     vi.mocked(validateClientSecret).mockResolvedValue(true);
