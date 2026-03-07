@@ -86,3 +86,34 @@ The `packages/typescript-config/node.json` variant (used by `apps/server`) strip
 ## Worktrees
 
 Feature work uses git worktrees in `.claude/worktrees/`. The main repo is at the root; worktrees are isolated branches. Run `git worktree list` to see active worktrees.
+
+## About CAGE
+
+CAGE (Confirmed Age, Granted Entry) is an age verification Identity Provider (IdP).
+Consumer tagline: "Check Age, Go Everywhere"
+
+### What it does
+
+- Users verify their age once via Veriff (third-party ID verification)
+- CAGE stores only the result (age_floor: 18+) — never the raw ID or face scan
+- Partner sites (Facebook etc.) integrate via OAuth 2.0 / OIDC
+- CAGE issues signed JWT tokens to partners confirming age verification
+- Browser extension enables silent token passing on repeat visits
+
+### Critical architecture decisions
+
+- CAGE never stores government IDs, face scans, or exact dates of birth
+- Per-partner anonymous sub IDs prevent cross-site user tracking
+- Veriff handles all document/biometric processing via their SDK
+- Verification results expire after 12 months
+
+### Tech stack
+
+- Server: Hono + TypeScript + Drizzle ORM
+- Database: Neon (Postgres) — connection string in Doppler as DATABASE_URL
+- Secrets: Doppler (never .env files)
+- Monorepo: Turborepo + pnpm
+
+### Database tables
+
+`users`, `verifications`, `partners`, `partner_subs`
