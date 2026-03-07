@@ -1,5 +1,6 @@
 // apps/server/src/routes/oauth.ts
 import { Hono } from "hono";
+import type { Context } from "hono";
 import { getCookie } from "hono/cookie";
 import { getJwks, generateAuthCode } from "../services/token.service.js";
 import {
@@ -166,8 +167,7 @@ oauthRoutes.post("/consent", async (c) => {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function issueAuthCode(c: any, userId: string, partnerId: string, redirectUri: string, state: string) {
+async function issueAuthCode(c: Context, userId: string, partnerId: string, redirectUri: string, state: string) {
   const code = generateAuthCode();
   await redis.set(
     `oauth_code:${code}`,
