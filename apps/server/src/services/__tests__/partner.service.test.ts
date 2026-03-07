@@ -1,6 +1,12 @@
 // apps/server/src/services/__tests__/partner.service.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { findActivePartner, validateRedirectUri } from '../partner.service.js';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import * as argon2 from 'argon2';
+import {
+  findActivePartner,
+  validateClientSecret,
+  validateRedirectUri,
+} from '../partner.service.js';
+import type { Partner } from '../partner.service.js';
 
 // Mock the database module
 vi.mock('../../db/index.js', () => ({
@@ -15,7 +21,12 @@ vi.mock('../../db/index.js', () => ({
 
 import { db } from '../../db/index.js';
 
-const mockPartner = {
+let correctHash: string;
+beforeAll(async () => {
+  correctHash = await argon2.hash('correct-secret');
+});
+
+const mockPartner: Partner = {
   id: 'test-partner-uuid',
   name: 'Test Partner',
   domain: 'testpartner.com',
@@ -75,6 +86,26 @@ describe('partner.service', () => {
       expect(
         validateRedirectUri(mockPartner, 'https://evil.testpartner.com/callback')
       ).toBe(false);
+    });
+  });
+
+  describe('validateClientSecret', () => {
+    it('returns true when the secret matches the hash', async () => {
+      const partner = { ...mockPartner, clientSecretHash: correctHash };
+      const result = await validateClientSecret(partner, 'correct-secret');
+      expect(result).toBe(true);
+    });
+
+    it('returns false when the secret does not match the hash', async () => {
+      const partner = { ...mockPartner, clientSecretHash: correctHash };
+      const result = await validateClientSecret(partner, 'wrong-secret');
+      expect(result).toBe(false);
+    });
+
+    it('returns false (does not throw) when the hash is malformed', async () => {
+      const partner = { ...mockPartner, clientSecretHash: 'not-a-valid-argon2-hash' };
+      const result = await validateClientSecret(partner, 'any-secret');
+      expect(result).toBe(false);
     });
   });
 });
