@@ -10,13 +10,18 @@
     "lint": "eslint --max-warnings 0",
     "check-types": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
     "@neondatabase/serverless": "^1.0.2",
+    "@upstash/redis": "^1.36.3",
+    "argon2": "^0.44.0",
     "drizzle-orm": "^0.41.0",
-    "hono": "^4.7.5"
+    "hono": "^4.7.5",
+    "jose": "^6.2.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -25,6 +30,7 @@
     "drizzle-kit": "^0.30.4",
     "eslint": "^9.39.1",
     "tsx": "^4.19.3",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^4.0.18"
   }
 }
