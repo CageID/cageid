@@ -67,7 +67,8 @@ authRoutes.get('/verify', async (c) => {
 // ─── POST /auth/logout ────────────────────────────────────────────────────────
 
 authRoutes.post('/logout', requireAuth, async (c) => {
-  const sessionId = getCookie(c, 'cage_session')!;
+  const sessionId = getCookie(c, 'cage_session');
+  if (!sessionId) return c.json({ error: 'Unauthorized' }, 401);
   await deleteSession(sessionId);
   deleteCookie(c, 'cage_session', { path: '/' });
   return c.json({ message: 'Logged out' });
@@ -77,7 +78,8 @@ authRoutes.post('/logout', requireAuth, async (c) => {
 
 authRoutes.delete('/account', requireAuth, async (c) => {
   const userId = c.get('userId');
-  const sessionId = getCookie(c, 'cage_session')!;
+  const sessionId = getCookie(c, 'cage_session');
+  if (!sessionId) return c.json({ error: 'Unauthorized' }, 401);
 
   await deleteAccount(userId);
   await deleteSession(sessionId);
