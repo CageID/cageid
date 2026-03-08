@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { checkAuth } from "../lib/auth";
 import { DeleteAccountButton } from "./delete-account-button";
+import { SignOutButton } from "./sign-out-button";
 
 function StatusBadge({ status }: { status: string }) {
   switch (status) {
@@ -98,6 +99,7 @@ export default async function DashboardPage() {
 
       {/* Account actions */}
       <div className="flex items-center justify-between pt-4">
+        <SignOutButton />
         <DeleteAccountButton />
       </div>
     </div>
