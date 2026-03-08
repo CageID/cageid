@@ -21,7 +21,8 @@
     "argon2": "^0.44.0",
     "drizzle-orm": "^0.41.0",
     "hono": "^4.7.5",
-    "jose": "^6.2.0"
+    "jose": "^6.2.0",
+    "resend": "^6.9.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
