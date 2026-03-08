@@ -28,6 +28,12 @@ authRoutes.post('/magic-link', async (c) => {
     return c.json({ error: 'email is required' }, 400);
   }
 
+  // Basic email format validation — prevents garbage user creation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return c.json({ error: 'Invalid email address' }, 400);
+  }
+
   const result = await sendMagicLink(email);
 
   if ('rateLimited' in result) {
@@ -81,8 +87,9 @@ authRoutes.delete('/account', requireAuth, async (c) => {
   const sessionId = getCookie(c, 'cage_session');
   if (!sessionId) return c.json({ error: 'Unauthorized' }, 401);
 
-  await deleteAccount(userId);
+  // Delete session first — prevents ghost session if DB delete fails
   await deleteSession(sessionId);
+  await deleteAccount(userId);
   deleteCookie(c, 'cage_session', { path: '/' });
 
   return c.json({ message: 'Account deleted' });

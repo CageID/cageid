@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+// ─── Hoisted mock variables ──────────────────────────────────────────────────
+
+const mockEmailSend = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ data: { id: 'email-id' }, error: null })
+);
+
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
 vi.mock('../../lib/redis.js', () => ({
@@ -29,7 +35,7 @@ vi.mock('resend', () => ({
   Resend: vi.fn().mockImplementation(function () {
     return {
       emails: {
-        send: vi.fn().mockResolvedValue({ data: { id: 'email-id' }, error: null }),
+        send: mockEmailSend,
       },
     };
   }),
@@ -66,6 +72,8 @@ const mockUser = {
 describe('auth.service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Restore default send mock after clearAllMocks wipes implementations
+    mockEmailSend.mockResolvedValue({ data: { id: 'email-id' }, error: null });
   });
 
   // ── sendMagicLink ──────────────────────────────────────────────────────────
@@ -145,6 +153,22 @@ describe('auth.service', () => {
       expect(key).toMatch(/^magic_link:[a-f0-9]{64}$/);
       const value = setCall[1] as { userId: string; email: string };
       expect(value.userId).toBe('user-uuid-123');
+    });
+
+    it('throws when Resend returns an error', async () => {
+      vi.mocked(redis.incr).mockResolvedValue(1);
+      vi.mocked(redis.expire).mockResolvedValue(1);
+      vi.mocked(db.query.users.findFirst).mockResolvedValue(mockUser);
+
+      // Override the shared send mock to return an error for this test only
+      mockEmailSend.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'API key invalid', name: 'validation_error' },
+      });
+
+      await expect(sendMagicLink('test@example.com')).rejects.toThrow(
+        'Failed to send magic link email'
+      );
     });
   });
 

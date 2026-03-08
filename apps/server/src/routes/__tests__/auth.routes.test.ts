@@ -75,6 +75,16 @@ describe('POST /auth/magic-link', () => {
     expect(vi.mocked(sendMagicLink)).toHaveBeenCalledWith('user@example.com');
   });
 
+  it('returns 400 for malformed email address', async () => {
+    const app = makeApp();
+    const res = await app.fetch(
+      jsonPost('/auth/magic-link', { email: 'notanemail' })
+    );
+    expect(res.status).toBe(400);
+    const body = await res.json() as Record<string, string>;
+    expect(body.error).toBeDefined();
+  });
+
   it('returns 429 when rate limit is exceeded', async () => {
     vi.mocked(sendMagicLink).mockResolvedValue({ rateLimited: true });
     const app = makeApp();

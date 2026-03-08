@@ -5,6 +5,10 @@ import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 
+// ─── Resend client (module-level singleton) ───────────────────────────────────
+
+const resend = new Resend(process.env['RESEND_API_KEY'] ?? '');
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type SendMagicLinkResult = { sent: true } | { rateLimited: true };
@@ -54,8 +58,7 @@ export async function sendMagicLink(email: string): Promise<SendMagicLinkResult>
   const baseUrl = process.env['APP_BASE_URL'] ?? 'https://cageid.app';
   const magicLinkUrl = `${baseUrl}/auth/verify?token=${token}`;
 
-  const resend = new Resend(process.env['RESEND_API_KEY'] ?? '');
-  await resend.emails.send({
+  const { error: sendError } = await resend.emails.send({
     from: 'CAGE <noreply@cageid.app>',
     to: email,
     subject: 'Your CAGE sign-in link',
@@ -65,6 +68,10 @@ export async function sendMagicLink(email: string): Promise<SendMagicLinkResult>
       <p>If you didn't request this, you can safely ignore this email.</p>
     `,
   });
+
+  if (sendError) {
+    throw new Error(`Failed to send magic link email: ${sendError.message}`);
+  }
 
   return { sent: true };
 }
@@ -84,7 +91,7 @@ export async function verifyMagicLink(
   );
   if (!data) return null;
 
-  // Mark email as verified (no-op if already set)
+  // Update email_verified_at — advances timestamp on each successful verification
   await db
     .update(users)
     .set({ emailVerifiedAt: new Date() })
