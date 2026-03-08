@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -23,9 +24,9 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col">
           {/* Header */}
           <header className="py-6 text-center">
-            <a href="/" className="text-xl font-semibold tracking-tight text-cage-dark dark:text-cage-text-dark">
+            <Link href="/" className="text-xl font-semibold tracking-tight text-cage-dark dark:text-cage-text-dark">
               CAGE
-            </a>
+            </Link>
           </header>
 
           {/* Main content — narrow centered column */}
