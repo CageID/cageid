@@ -6,7 +6,7 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["PORT", "DATABASE_URL"]
+      "env": ["PORT", "DATABASE_URL", "OIDC_ISSUER", "JWT_PRIVATE_KEY", "JWT_PUBLIC_KEY", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"]
     },
     "lint": {
       "dependsOn": ["^lint"]
