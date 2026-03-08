@@ -15,6 +15,8 @@ import { randomUUID } from "crypto";
 
 export const oauthRoutes = new Hono();
 
+const WEB_BASE = process.env['WEB_BASE_URL'] ?? 'http://localhost:3000';
+
 const ISSUER = process.env["OIDC_ISSUER"] ?? "https://cageid.app";
 
 // ─── OIDC Discovery ────────────────────────────────────────────────────────
@@ -142,7 +144,10 @@ oauthRoutes.get("/authorize", async (c) => {
       { userId, partnerId: partner.id, redirectUri: redirect_uri, state },
       { ex: 300 }
     );
-    return c.html(consentPage(partner.name, consentToken));
+    const consentUrl = new URL('/consent', WEB_BASE);
+    consentUrl.searchParams.set('consent_token', consentToken);
+    consentUrl.searchParams.set('partner_name', partner.name);
+    return c.redirect(consentUrl.toString());
   }
 
   return issueAuthCode(c, userId, partner.id, redirect_uri, state ?? "");
@@ -275,16 +280,6 @@ oauthRoutes.post("/token", async (c) => {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-/** Escapes HTML special characters to prevent XSS. */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
 async function issueAuthCode(c: Context, userId: string, partnerId: string, redirectUri: string, state: string) {
   const code = generateAuthCode();
   await redis.set(
@@ -296,21 +291,4 @@ async function issueAuthCode(c: Context, userId: string, partnerId: string, redi
   url.searchParams.set("code", code);
   if (state) url.searchParams.set("state", state);
   return c.redirect(url.toString());
-}
-
-function consentPage(partnerName: string, consentToken: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>CAGE — Share Age Verification</title></head>
-<body>
-  <h1>Share your age verification</h1>
-  <p><strong>${escapeHtml(partnerName)}</strong> is requesting confirmation of your age verification.</p>
-  <p>CAGE will share only that you are age-verified and your age bracket. No other personal information is shared.</p>
-  <form method="POST" action="/oauth/consent">
-    <input type="hidden" name="consent_token" value="${consentToken}" />
-    <button type="submit">Confirm — share age verification</button>
-  </form>
-  <p><a href="javascript:history.back()">Cancel</a></p>
-</body>
-</html>`;
 }

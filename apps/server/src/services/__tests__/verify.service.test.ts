@@ -15,6 +15,7 @@ process.env['VERIFF_API_KEY']        = 'test-api-key';
 process.env['VERIFF_WEBHOOK_SECRET'] = 'test-webhook-secret';
 process.env['VERIFF_BASE_URL']       = 'https://stationapi.veriff.com';
 process.env['APP_BASE_URL']          = 'https://cageid.app';
+process.env['WEB_BASE_URL']          = 'http://localhost:3000';
 
 import { db } from '../../db/index.js';
 import { createHmac } from 'crypto';
@@ -101,6 +102,10 @@ describe('createVeriffSession', () => {
         body: expect.stringContaining('"vendorData":"user-1"'),
       }),
     );
+
+    // Verify the callback URL points to the frontend via WEB_BASE_URL
+    const callBody = vi.mocked(fetch).mock.calls[0]![1]!.body as string;
+    expect(callBody).toContain('"callback":"http://localhost:3000/verify/callback"');
   });
 
   it('inserts a pending verifications row with the correct fields', async () => {
