@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { oauthRoutes } from './routes/oauth.js';
+import { authRoutes } from './routes/auth.js';
 
 const app = new Hono();
 
@@ -14,6 +15,9 @@ app.get('/health', (c) => {
 
 // OAuth 2.0 / OIDC endpoints
 app.route('/oauth', oauthRoutes);
+
+// User authentication (magic link)
+app.route('/auth', authRoutes);
 
 const port = Number(process.env['PORT'] ?? 3001);
 
