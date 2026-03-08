@@ -1,3 +1,6 @@
+import { db } from '../db/index.js';
+import { verifications } from '../db/schema.js';
+
 // ─── computeAgeFloor ─────────────────────────────────────────────────────────
 
 /**
@@ -28,4 +31,54 @@ export function computeAgeFloor(dateOfBirth: string, today = new Date()): number
   if (age >= 21) return 21;
   if (age >= 18) return 18;
   return null;
+}
+
+// ─── createVeriffSession ─────────────────────────────────────────────────────
+
+interface VeriffSessionResponse {
+  status: string;
+  verification: {
+    id:  string;
+    url: string;
+  };
+}
+
+export async function createVeriffSession(
+  userId: string
+): Promise<{ veriffSessionId: string; verificationUrl: string }> {
+  const baseUrl = process.env['VERIFF_BASE_URL'] ?? 'https://stationapi.veriff.com';
+  const apiKey  = process.env['VERIFF_API_KEY']  ?? '';
+  const appBase = process.env['APP_BASE_URL']    ?? 'https://cageid.app';
+
+  const response = await fetch(`${baseUrl}/v1/sessions`, {
+    method:  'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'X-AUTH-CLIENT': apiKey,
+    },
+    body: JSON.stringify({
+      verification: {
+        callback:   `${appBase}/verify/callback`,
+        vendorData: userId,
+        timestamp:  new Date().toISOString(),
+        lang:       'en',
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Veriff API error: ${response.status}`);
+  }
+
+  const data = (await response.json()) as VeriffSessionResponse;
+  const veriffSessionId = data.verification.id;
+  const verificationUrl = data.verification.url;
+
+  await db.insert(verifications).values({
+    userId,
+    veriffSessionId,
+    status: 'pending',
+  });
+
+  return { veriffSessionId, verificationUrl };
 }
