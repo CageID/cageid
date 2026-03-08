@@ -25,7 +25,7 @@ export default async function Home() {
       </div>
 
       <p className="mt-6 text-center text-xs text-cage-mid">
-        No password needed — we'll email you a secure link.
+        No password needed — we&apos;ll email you a secure link.
       </p>
     </div>
   );

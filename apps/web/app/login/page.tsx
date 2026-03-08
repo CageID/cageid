@@ -8,7 +8,7 @@ export default function LoginPage() {
           Sign in to CAGE
         </h1>
         <p className="text-sm text-cage-mid">
-          Enter your email and we'll send you a sign-in link.
+          Enter your email and we&apos;ll send you a sign-in link.
         </p>
       </div>
 
@@ -17,7 +17,7 @@ export default function LoginPage() {
       </div>
 
       <p className="mt-6 text-center text-xs text-cage-mid">
-        No password needed — we'll email you a secure link.
+        No password needed — we&apos;ll email you a secure link.
       </p>
     </div>
   );
