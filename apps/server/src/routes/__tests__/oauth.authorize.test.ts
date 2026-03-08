@@ -192,7 +192,7 @@ describe('GET /oauth/authorize', () => {
     );
   });
 
-  it('redirects to /verify when user has no valid verification', async () => {
+  it('redirects to /verify/start when user has no valid verification', async () => {
     vi.mocked(findActivePartner).mockResolvedValue(mockPartner);
     vi.mocked(validateRedirectUri).mockReturnValue(true);
     vi.mocked(redis.get).mockResolvedValue({ userId: 'user-uuid' });
@@ -204,13 +204,49 @@ describe('GET /oauth/authorize', () => {
       { headers: { Cookie: 'cage_session=test-session-id' } }
     );
     expect(res.status).toBe(302);
-    expect(res.headers.get('location')).toBe('/verify');
+    expect(res.headers.get('location')).toBe('/verify/start');
     // pending_oauth must be stored in session
     expect(vi.mocked(redis.set)).toHaveBeenCalledWith(
       expect.stringContaining('session:'),
       expect.objectContaining({ pending_oauth: expect.objectContaining({ client_id: 'partner-uuid' }) }),
       expect.any(Object)
     );
+  });
+
+  it('resumes OAuth flow from pending_oauth when no query params are provided', async () => {
+    // First call: pending_oauth lookup from session (no query params)
+    // Second call: session lookup inside the handler (step 3)
+    vi.mocked(redis.get)
+      .mockResolvedValueOnce({
+        userId: 'user-uuid',
+        pending_oauth: {
+          client_id: 'partner-uuid',
+          redirect_uri: 'https://testpartner.com/callback',
+          state: 'xyz',
+        },
+      })
+      .mockResolvedValueOnce({
+        userId: 'user-uuid',
+        pending_oauth: {
+          client_id: 'partner-uuid',
+          redirect_uri: 'https://testpartner.com/callback',
+          state: 'xyz',
+        },
+      });
+    vi.mocked(findActivePartner).mockResolvedValue(mockPartner);
+    vi.mocked(validateRedirectUri).mockReturnValue(true);
+    vi.mocked(db.query.verifications.findFirst).mockResolvedValue(mockVerification);
+    vi.mocked(db.query.partnerSubs.findFirst).mockResolvedValue(mockPartnerSub);
+    vi.mocked(redis.set).mockResolvedValue('OK');
+    const app = makeApp();
+    const res = await app.request('/oauth/authorize', {
+      headers: { Cookie: 'cage_session=test-session-id' },
+    });
+    expect(res.status).toBe(302);
+    const location = res.headers.get('location') ?? '';
+    expect(location).toContain('https://testpartner.com/callback');
+    expect(location).toContain('code=');
+    expect(location).toContain('state=xyz');
   });
 });
 
