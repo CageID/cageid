@@ -82,3 +82,17 @@ export async function createVeriffSession(
 
   return { veriffSessionId, verificationUrl };
 }
+
+// ─── getVerificationStatus ───────────────────────────────────────────────────
+
+export async function getVerificationStatus(
+  userId: string
+): Promise<{ status: 'pending' | 'approved' | 'declined' | 'none' }> {
+  const row = await db.query.verifications.findFirst({
+    where: (v, { eq: eqFn }) => eqFn(v.userId, userId),
+    orderBy: (v, { desc }) => [desc(v.createdAt)],
+  });
+
+  if (!row) return { status: 'none' };
+  return { status: row.status };
+}

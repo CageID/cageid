@@ -17,7 +17,7 @@ process.env['VERIFF_BASE_URL']       = 'https://stationapi.veriff.com';
 process.env['APP_BASE_URL']          = 'https://cageid.app';
 
 import { db } from '../../db/index.js';
-import { computeAgeFloor, createVeriffSession } from '../verify.service.js';
+import { computeAgeFloor, createVeriffSession, getVerificationStatus } from '../verify.service.js';
 
 // Fixed reference date for deterministic tests
 const TODAY = new Date('2026-03-07');
@@ -147,5 +147,70 @@ describe('createVeriffSession', () => {
 
     await expect(createVeriffSession('user-1')).rejects.toThrow();
     expect(db.insert).not.toHaveBeenCalled();
+  });
+});
+
+describe('getVerificationStatus', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns { status: "none" } when no row exists', async () => {
+    vi.mocked(db.query.verifications.findFirst).mockResolvedValue(undefined);
+
+    const result = await getVerificationStatus('user-1');
+
+    expect(result).toEqual({ status: 'none' });
+  });
+
+  it('returns { status: "pending" } for pending row', async () => {
+    vi.mocked(db.query.verifications.findFirst).mockResolvedValue({
+      id: 'v-1',
+      userId: 'user-1',
+      veriffSessionId: 'sess-1',
+      status: 'pending',
+      ageFloor: null,
+      verifiedAt: null,
+      expiresAt: null,
+      createdAt: new Date(),
+    });
+
+    const result = await getVerificationStatus('user-1');
+
+    expect(result).toEqual({ status: 'pending' });
+  });
+
+  it('returns { status: "approved" } for approved row', async () => {
+    vi.mocked(db.query.verifications.findFirst).mockResolvedValue({
+      id: 'v-1',
+      userId: 'user-1',
+      veriffSessionId: 'sess-1',
+      status: 'approved',
+      ageFloor: 21,
+      verifiedAt: new Date(),
+      expiresAt: new Date(),
+      createdAt: new Date(),
+    });
+
+    const result = await getVerificationStatus('user-1');
+
+    expect(result).toEqual({ status: 'approved' });
+  });
+
+  it('returns { status: "declined" } for declined row', async () => {
+    vi.mocked(db.query.verifications.findFirst).mockResolvedValue({
+      id: 'v-1',
+      userId: 'user-1',
+      veriffSessionId: 'sess-1',
+      status: 'declined',
+      ageFloor: null,
+      verifiedAt: null,
+      expiresAt: null,
+      createdAt: new Date(),
+    });
+
+    const result = await getVerificationStatus('user-1');
+
+    expect(result).toEqual({ status: 'declined' });
   });
 });
