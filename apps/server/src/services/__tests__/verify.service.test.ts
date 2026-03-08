@@ -17,7 +17,8 @@ process.env['VERIFF_BASE_URL']       = 'https://stationapi.veriff.com';
 process.env['APP_BASE_URL']          = 'https://cageid.app';
 
 import { db } from '../../db/index.js';
-import { computeAgeFloor, createVeriffSession, getVerificationStatus } from '../verify.service.js';
+import { createHmac } from 'crypto';
+import { computeAgeFloor, createVeriffSession, getVerificationStatus, handleWebhook } from '../verify.service.js';
 
 // Fixed reference date for deterministic tests
 const TODAY = new Date('2026-03-07');
@@ -212,5 +213,160 @@ describe('getVerificationStatus', () => {
     const result = await getVerificationStatus('user-1');
 
     expect(result).toEqual({ status: 'declined' });
+  });
+});
+
+function makeSignature(body: string): string {
+  return createHmac('sha256', 'test-webhook-secret').update(body).digest('hex');
+}
+
+describe('handleWebhook', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns { error: "invalid_signature" } on HMAC mismatch', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const result = await handleWebhook(body, 'bad-signature');
+
+    expect(result).toEqual({ error: 'invalid_signature' });
+  });
+
+  it('returns { error: "invalid_signature" } for empty signature', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const result = await handleWebhook(body, '');
+
+    expect(result).toEqual({ error: 'invalid_signature' });
+  });
+
+  it('returns { ok: true } and does nothing for non-approved/declined statuses', async () => {
+    const body = JSON.stringify({ status: 'resubmission_requested', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const sig = makeSignature(body);
+
+    const result = await handleWebhook(body, sig);
+
+    expect(result).toEqual({ ok: true });
+    expect(db.query.users.findFirst).not.toHaveBeenCalled();
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it('returns { ok: true } and does nothing for unknown userId', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
+    const sig = makeSignature(body);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(undefined);
+
+    const result = await handleWebhook(body, sig);
+
+    expect(result).toEqual({ ok: true });
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it('updates row to declined on declined status', async () => {
+    const body = JSON.stringify({ status: 'declined', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const sig = makeSignature(body);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({
+      id: 'user-1',
+      email: 'test@example.com',
+      emailVerifiedAt: null,
+      createdAt: new Date(),
+    });
+    const mockWhere = vi.fn().mockResolvedValue(undefined);
+    const mockSet   = vi.fn().mockReturnValue({ where: mockWhere });
+    vi.mocked(db.update).mockReturnValue({ set: mockSet } as unknown as ReturnType<typeof db.update>);
+
+    const result = await handleWebhook(body, sig);
+
+    expect(result).toEqual({ ok: true });
+    expect(mockSet).toHaveBeenCalledWith({ status: 'declined' });
+  });
+
+  it('sets age_floor=21 for someone old enough (DOB 1990-01-01)', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
+    const sig = makeSignature(body);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({
+      id: 'user-1',
+      email: 'test@example.com',
+      emailVerifiedAt: null,
+      createdAt: new Date(),
+    });
+    const mockWhere = vi.fn().mockResolvedValue(undefined);
+    const mockSet   = vi.fn().mockReturnValue({ where: mockWhere });
+    vi.mocked(db.update).mockReturnValue({ set: mockSet } as unknown as ReturnType<typeof db.update>);
+
+    const result = await handleWebhook(body, sig);
+
+    expect(result).toEqual({ ok: true });
+    expect(mockSet).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'approved', ageFloor: 21 }),
+    );
+  });
+
+  it('sets age_floor=18 for someone aged 18-20 (DOB 2008-01-01)', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '2008-01-01' } } });
+    const sig = makeSignature(body);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({
+      id: 'user-1',
+      email: 'test@example.com',
+      emailVerifiedAt: null,
+      createdAt: new Date(),
+    });
+    const mockWhere = vi.fn().mockResolvedValue(undefined);
+    const mockSet   = vi.fn().mockReturnValue({ where: mockWhere });
+    vi.mocked(db.update).mockReturnValue({ set: mockSet } as unknown as ReturnType<typeof db.update>);
+
+    const result = await handleWebhook(body, sig);
+
+    expect(result).toEqual({ ok: true });
+    expect(mockSet).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'approved', ageFloor: 18 }),
+    );
+  });
+
+  it('sets status=declined and emits console.warn when Veriff approves someone under 18 (DOB 2015-06-15)', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '2015-06-15' } } });
+    const sig = makeSignature(body);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({
+      id: 'user-1',
+      email: 'test@example.com',
+      emailVerifiedAt: null,
+      createdAt: new Date(),
+    });
+    const mockWhere = vi.fn().mockResolvedValue(undefined);
+    const mockSet   = vi.fn().mockReturnValue({ where: mockWhere });
+    vi.mocked(db.update).mockReturnValue({ set: mockSet } as unknown as ReturnType<typeof db.update>);
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const result = await handleWebhook(body, sig);
+
+    expect(result).toEqual({ ok: true });
+    expect(mockSet).toHaveBeenCalledWith({ status: 'declined' });
+    expect(warnSpy).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-1' }));
+    warnSpy.mockRestore();
+  });
+
+  it('sets verifiedAt and expiresAt (~12 months) on approval', async () => {
+    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
+    const sig = makeSignature(body);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({
+      id: 'user-1',
+      email: 'test@example.com',
+      emailVerifiedAt: null,
+      createdAt: new Date(),
+    });
+    const mockWhere = vi.fn().mockResolvedValue(undefined);
+    const mockSet   = vi.fn().mockReturnValue({ where: mockWhere });
+    vi.mocked(db.update).mockReturnValue({ set: mockSet } as unknown as ReturnType<typeof db.update>);
+
+    await handleWebhook(body, sig);
+
+    const setArg = mockSet.mock.calls[0]![0] as { verifiedAt: Date; expiresAt: Date };
+    expect(setArg.verifiedAt).toBeInstanceOf(Date);
+    expect(setArg.expiresAt).toBeInstanceOf(Date);
+
+    const diffMs = setArg.expiresAt.getTime() - setArg.verifiedAt.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    // ~365 days, allow some tolerance for leap year
+    expect(diffDays).toBeGreaterThanOrEqual(365);
+    expect(diffDays).toBeLessThanOrEqual(366);
   });
 });

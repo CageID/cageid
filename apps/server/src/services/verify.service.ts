@@ -1,3 +1,5 @@
+import { createHmac, timingSafeEqual } from 'crypto';
+import { eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { verifications } from '../db/schema.js';
 
@@ -95,4 +97,79 @@ export async function getVerificationStatus(
 
   if (!row) return { status: 'none' };
   return { status: row.status };
+}
+
+// ─── handleWebhook ───────────────────────────────────────────────────────────
+
+type WebhookResult = { ok: true } | { error: 'invalid_signature' };
+
+interface VeriffWebhookPayload {
+  status: string;
+  verification: {
+    id:         string;
+    vendorData: string;
+    person?: { dateOfBirth?: string };
+  };
+}
+
+export async function handleWebhook(
+  rawBody: string,
+  signature: string
+): Promise<WebhookResult> {
+  const secret   = process.env['VERIFF_WEBHOOK_SECRET'] ?? '';
+  const computed = createHmac('sha256', secret).update(rawBody).digest('hex');
+  const computedBuf  = Buffer.from(computed);
+  const receivedBuf  = Buffer.from(signature);
+
+  if (computedBuf.length !== receivedBuf.length || !timingSafeEqual(computedBuf, receivedBuf)) {
+    return { error: 'invalid_signature' };
+  }
+
+  const payload = JSON.parse(rawBody) as VeriffWebhookPayload;
+  const { status, verification } = payload;
+  const { id: veriffSessionId, vendorData: userId } = verification;
+
+  if (status !== 'approved' && status !== 'declined') {
+    return { ok: true };
+  }
+
+  const user = await db.query.users.findFirst({
+    where: (u, { eq: eqFn }) => eqFn(u.id, userId),
+  });
+  if (!user) return { ok: true };
+
+  if (status === 'declined') {
+    await db.update(verifications).set({ status: 'declined' }).where(eq(verifications.veriffSessionId, veriffSessionId));
+    return { ok: true };
+  }
+
+  const dateOfBirth = verification.person?.dateOfBirth;
+  if (!dateOfBirth) {
+    await db.update(verifications).set({ status: 'declined' }).where(eq(verifications.veriffSessionId, veriffSessionId));
+    return { ok: true };
+  }
+
+  const ageFloor = computeAgeFloor(dateOfBirth);
+
+  if (ageFloor === null) {
+    // Under 18 edge case — compute age for warning log
+    const today = new Date();
+    const parts = dateOfBirth.split('-');
+    const by = parseInt(parts[0]!, 10);
+    const bm = parseInt(parts[1]!, 10);
+    const bd = parseInt(parts[2]!, 10);
+    let computedAge = today.getFullYear() - by;
+    if (today < new Date(today.getFullYear(), bm - 1, bd)) computedAge--;
+    console.warn({ userId, computedAge });
+
+    await db.update(verifications).set({ status: 'declined' }).where(eq(verifications.veriffSessionId, veriffSessionId));
+    return { ok: true };
+  }
+
+  const now       = new Date();
+  const expiresAt = new Date(now);
+  expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+  await db.update(verifications).set({ status: 'approved', ageFloor, verifiedAt: now, expiresAt }).where(eq(verifications.veriffSessionId, veriffSessionId));
+  return { ok: true };
 }
