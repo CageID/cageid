@@ -20,16 +20,19 @@ vi.mock('../../db/index.js', () => ({
       },
     },
     insert: vi.fn(),
+    update: vi.fn(),
     delete: vi.fn(),
   },
 }));
 
 vi.mock('resend', () => ({
-  Resend: vi.fn().mockImplementation(() => ({
-    emails: {
-      send: vi.fn().mockResolvedValue({ data: { id: 'email-id' }, error: null }),
-    },
-  })),
+  Resend: vi.fn().mockImplementation(function () {
+    return {
+      emails: {
+        send: vi.fn().mockResolvedValue({ data: { id: 'email-id' }, error: null }),
+      },
+    };
+  }),
 }));
 
 // ─── Env setup (must be before service import) ──────────────────────────────
@@ -161,12 +164,11 @@ describe('auth.service', () => {
         userId: 'user-uuid-123',
         email: 'test@example.com',
       });
-      // db.update mock — we mock it on the db object directly
-      (db as any).update = vi.fn().mockReturnValue({
+      vi.mocked(db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockResolvedValue(undefined),
         }),
-      });
+      } as any);
 
       await verifyMagicLink('valid-token');
 
@@ -180,11 +182,11 @@ describe('auth.service', () => {
         userId: 'user-uuid-123',
         email: 'test@example.com',
       });
-      (db as any).update = vi.fn().mockReturnValue({
+      vi.mocked(db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockResolvedValue(undefined),
         }),
-      });
+      } as any);
 
       const result = await verifyMagicLink('valid-token');
 

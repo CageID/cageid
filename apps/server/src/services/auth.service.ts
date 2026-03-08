@@ -5,16 +5,6 @@ import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 
-// ─── Resend client factory ────────────────────────────────────────────────────
-// Calls Resend as a plain function (via cast) so that vi.mock('resend', ...)
-// with an arrow function implementation works in tests (arrow fns can't be
-// used as constructors, but they can be called as plain functions).
-type ResendClient = { emails: { send: (...args: unknown[]) => Promise<unknown> } };
-function getResendClient(): ResendClient {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (Resend as any)(process.env['RESEND_API_KEY'] ?? '') as ResendClient;
-}
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type SendMagicLinkResult = { sent: true } | { rateLimited: true };
@@ -64,7 +54,8 @@ export async function sendMagicLink(email: string): Promise<SendMagicLinkResult>
   const baseUrl = process.env['APP_BASE_URL'] ?? 'https://cageid.app';
   const magicLinkUrl = `${baseUrl}/auth/verify?token=${token}`;
 
-  await getResendClient().emails.send({
+  const resend = new Resend(process.env['RESEND_API_KEY'] ?? '');
+  await resend.emails.send({
     from: 'CAGE <noreply@cageid.app>',
     to: email,
     subject: 'Your CAGE sign-in link',
