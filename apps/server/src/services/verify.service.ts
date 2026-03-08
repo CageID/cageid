@@ -50,7 +50,7 @@ export async function createVeriffSession(
 ): Promise<{ veriffSessionId: string; verificationUrl: string }> {
   const baseUrl = process.env['VERIFF_BASE_URL'] ?? 'https://stationapi.veriff.com';
   const apiKey  = process.env['VERIFF_API_KEY']  ?? '';
-  const appBase = process.env['APP_BASE_URL']    ?? 'https://cageid.app';
+  const webBase = process.env['WEB_BASE_URL']    ?? 'http://localhost:3000';
 
   const response = await fetch(`${baseUrl}/v1/sessions`, {
     method:  'POST',
@@ -60,7 +60,7 @@ export async function createVeriffSession(
     },
     body: JSON.stringify({
       verification: {
-        callback:   `${appBase}/verify/callback`,
+        callback:   `${webBase}/verify/callback`,
         vendorData: userId,
         timestamp:  new Date().toISOString(),
         lang:       'en',
