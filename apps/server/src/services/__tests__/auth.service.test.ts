@@ -126,7 +126,7 @@ describe('auth.service', () => {
           returning: vi.fn().mockResolvedValue([mockUser]),
         }),
       };
-      vi.mocked(db.insert).mockReturnValue(mockInsert as any);
+      vi.mocked(db.insert).mockReturnValue(mockInsert as unknown as ReturnType<typeof db.insert>);
 
       await sendMagicLink('new@example.com');
 
@@ -168,7 +168,7 @@ describe('auth.service', () => {
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockResolvedValue(undefined),
         }),
-      } as any);
+      } as unknown as ReturnType<typeof db.update>);
 
       await verifyMagicLink('valid-token');
 
@@ -186,7 +186,7 @@ describe('auth.service', () => {
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockResolvedValue(undefined),
         }),
-      } as any);
+      } as unknown as ReturnType<typeof db.update>);
 
       const result = await verifyMagicLink('valid-token');
 
@@ -239,11 +239,13 @@ describe('auth.service', () => {
     it('deletes the user from the database', async () => {
       const mockWhere = vi.fn().mockResolvedValue(undefined);
       const mockDelete = { where: mockWhere };
-      (db as any).delete = vi.fn().mockReturnValue(mockDelete);
+      const deleteSpy = vi
+        .spyOn(db, 'delete')
+        .mockReturnValue(mockDelete as unknown as ReturnType<typeof db.delete>);
 
       await deleteAccount('user-uuid-123');
 
-      expect((db as any).delete).toHaveBeenCalled();
+      expect(deleteSpy).toHaveBeenCalled();
       expect(mockWhere).toHaveBeenCalled();
     });
   });

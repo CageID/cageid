@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Context, Next } from 'hono';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -11,7 +12,7 @@ vi.mock('../../services/auth.service.js', () => ({
 }));
 
 vi.mock('../../middleware/requireAuth.js', () => ({
-  requireAuth: vi.fn(async (c: any, next: any) => {
+  requireAuth: vi.fn(async (c: Context, next: Next) => {
     c.set('userId', 'test-user-uuid');
     await next();
   }),
