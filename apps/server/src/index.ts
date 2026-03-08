@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { oauthRoutes } from './routes/oauth.js';
 import { authRoutes } from './routes/auth.js';
+import { verifyRoutes } from './routes/verify.js';
 
 const app = new Hono();
 
@@ -18,6 +19,9 @@ app.route('/oauth', oauthRoutes);
 
 // User authentication (magic link)
 app.route('/auth', authRoutes);
+
+// Identity verification (Veriff)
+app.route('/verify', verifyRoutes);
 
 const port = Number(process.env['PORT'] ?? 3001);
 
