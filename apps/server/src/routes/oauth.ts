@@ -50,7 +50,26 @@ oauthRoutes.get("/.well-known/jwks.json", async (c) => {
 // ─── Authorize ─────────────────────────────────────────────────────────────
 
 oauthRoutes.get("/authorize", async (c) => {
-  const { client_id, redirect_uri, state, response_type } = c.req.query();
+  let { client_id, redirect_uri, state, response_type } = c.req.query();
+
+  // If params are missing, check session for pending_oauth (resuming after Veriff verification).
+  // The callback page redirects to /oauth/authorize with no query params.
+  if (!client_id || !redirect_uri || !response_type) {
+    const sessionId = getCookie(c, "cage_session");
+    if (sessionId) {
+      const session = await redis.get<{
+        userId: string;
+        pending_oauth?: { client_id: string; redirect_uri: string; state?: string };
+      }>(`session:${sessionId}`);
+
+      if (session?.pending_oauth) {
+        client_id = session.pending_oauth.client_id;
+        redirect_uri = session.pending_oauth.redirect_uri;
+        state = session.pending_oauth.state;
+        response_type = "code";
+      }
+    }
+  }
 
   // 1. Basic param validation
   if (!client_id || !redirect_uri || !response_type) {
@@ -98,7 +117,7 @@ oauthRoutes.get("/authorize", async (c) => {
       { userId, pending_oauth: { client_id, redirect_uri, state } },
       { ex: 1800 }
     );
-    return c.redirect("/verify");
+    return c.redirect("/verify/start");
   }
 
   // 5. Age floor check
