@@ -168,7 +168,7 @@ describe('GET /oauth/authorize', () => {
     );
   });
 
-  it('shows consent page when user has no existing partner_subs', async () => {
+  it('redirects to frontend consent page when user has no existing partner_subs', async () => {
     vi.mocked(findActivePartner).mockResolvedValue(mockPartner);
     vi.mocked(validateRedirectUri).mockReturnValue(true);
     vi.mocked(redis.get).mockResolvedValue({ userId: 'user-uuid' });
@@ -180,10 +180,12 @@ describe('GET /oauth/authorize', () => {
       '/oauth/authorize?client_id=partner-uuid&redirect_uri=https://testpartner.com/callback&state=mystate&response_type=code',
       { headers: { Cookie: 'cage_session=test-session-id' } }
     );
-    expect(res.status).toBe(200);
-    const html = await res.text();
-    expect(html).toContain('consent_token');
-    expect(html).toContain('Test Partner');
+    expect(res.status).toBe(302);
+    const location = res.headers.get('location') ?? '';
+    expect(location).toMatch(/^http:\/\/localhost:3000\/consent\?/);
+    const locationUrl = new URL(location);
+    expect(locationUrl.searchParams.has('consent_token')).toBe(true);
+    expect(locationUrl.searchParams.get('partner_name')).toBe('Test Partner');
     // Consent state must be stored in Redis with 300s TTL
     expect(vi.mocked(redis.set)).toHaveBeenCalledWith(
       expect.stringContaining('oauth_consent:'),
