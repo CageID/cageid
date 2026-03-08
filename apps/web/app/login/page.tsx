@@ -1,22 +1,14 @@
-import { redirect } from "next/navigation";
-import { checkAuth } from "./lib/auth";
-import { LoginForm } from "./login/login-form";
+import { LoginForm } from "./login-form";
 
-export default async function Home() {
-  const auth = await checkAuth();
-  if (auth.authenticated) {
-    redirect("/dashboard");
-  }
-
+export default function LoginPage() {
   return (
     <div className="py-16">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-semibold text-cage-dark dark:text-cage-text-dark mb-2">
-          Check Age, Go Everywhere
+          Sign in to CAGE
         </h1>
         <p className="text-sm text-cage-mid">
-          Verify your age once. Access age-restricted sites without
-          re-verifying.
+          Enter your email and we'll send you a sign-in link.
         </p>
       </div>
 
