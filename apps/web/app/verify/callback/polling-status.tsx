@@ -40,12 +40,21 @@ export function PollingStatus() {
         }
 
         failureCount.current = 0;
-        const data = (await res.json()) as { status: string };
+        const data = (await res.json()) as {
+          status: string;
+          hasPendingOAuth?: boolean;
+        };
 
         if (data.status === "approved") {
           if (intervalRef.current) clearInterval(intervalRef.current);
           setMessage("Verification successful! Redirecting\u2026");
-          router.push("/dashboard");
+
+          if (data.hasPendingOAuth) {
+            // Resume the OAuth flow — server will read pending_oauth from session
+            window.location.href = "/api/oauth/authorize";
+          } else {
+            router.push("/dashboard");
+          }
           return;
         }
 

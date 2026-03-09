@@ -104,7 +104,7 @@ describe('GET /verify/status', () => {
     );
     expect(res.status).toBe(200);
     const body = await res.json() as Record<string, string>;
-    expect(body).toEqual({ status: 'pending' });
+    expect(body).toEqual({ status: 'pending', hasPendingOAuth: false });
   });
 
   it('returns { status: "none" } when no verification row exists', async () => {
@@ -115,7 +115,7 @@ describe('GET /verify/status', () => {
     );
     expect(res.status).toBe(200);
     const body = await res.json() as Record<string, string>;
-    expect(body).toEqual({ status: 'none' });
+    expect(body).toEqual({ status: 'none', hasPendingOAuth: false });
   });
 });
 

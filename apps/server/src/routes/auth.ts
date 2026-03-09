@@ -34,7 +34,10 @@ authRoutes.post('/magic-link', async (c) => {
     return c.json({ error: 'Invalid email address' }, 400);
   }
 
-  const result = await sendMagicLink(email);
+  // Optional: where to redirect after login (used by OAuth flow)
+  const next = typeof body['next'] === 'string' ? body['next'] : undefined;
+
+  const result = await sendMagicLink(email, next);
 
   if ('rateLimited' in result) {
     return c.json({ error: 'Too many requests. Please try again later.' }, 429);
@@ -68,6 +71,16 @@ authRoutes.get('/verify', async (c) => {
   });
 
   const webBase = process.env['WEB_BASE_URL'] ?? 'https://cageid.app';
+
+  // If a `next` URL was stored (e.g. from OAuth flow), redirect there instead of dashboard.
+  // Rewrite server-direct URLs to go through the frontend proxy so the session cookie
+  // (set on the frontend's domain) is included in the subsequent request.
+  const appBase = process.env['APP_BASE_URL'] ?? 'http://localhost:3001';
+  if (data.next && data.next.startsWith(appBase)) {
+    const nextPath = data.next.slice(appBase.length); // e.g., "/oauth/authorize?..."
+    return c.redirect(`${webBase}/api${nextPath}`);
+  }
+
   return c.redirect(`${webBase}/dashboard`);
 });
 

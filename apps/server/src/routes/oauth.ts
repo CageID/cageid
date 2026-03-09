@@ -93,11 +93,11 @@ oauthRoutes.get("/authorize", async (c) => {
   // 3. Check session cookie — redirect_uri is trusted from this point on
   const sessionId = getCookie(c, "cage_session");
   if (!sessionId) {
-    return c.redirect(`/login?next=${encodeURIComponent(c.req.url)}`);
+    return c.redirect(`${WEB_BASE}/login?next=${encodeURIComponent(c.req.url)}`);
   }
   const session = await redis.get<{ userId: string }>(`session:${sessionId}`);
   if (!session?.userId) {
-    return c.redirect(`/login?next=${encodeURIComponent(c.req.url)}`);
+    return c.redirect(`${WEB_BASE}/login?next=${encodeURIComponent(c.req.url)}`);
   }
   const userId = session.userId;
 
@@ -119,7 +119,7 @@ oauthRoutes.get("/authorize", async (c) => {
       { userId, pending_oauth: { client_id, redirect_uri, state } },
       { ex: 1800 }
     );
-    return c.redirect("/verify/start");
+    return c.redirect(`${WEB_BASE}/verify`);
   }
 
   // 5. Age floor check

@@ -58,7 +58,19 @@ verifyRoutes.get('/callback', async (c) => {
 verifyRoutes.get('/status', requireAuth, async (c) => {
   const userId = c.get('userId');
   const result = await getVerificationStatus(userId);
-  return c.json(result);
+
+  // Check for pending OAuth flow — frontend uses this to redirect after verification
+  const sessionId = getCookie(c, 'cage_session');
+  let hasPendingOAuth = false;
+  if (sessionId) {
+    const session = await redis.get<{
+      userId: string;
+      pending_oauth?: { client_id: string; redirect_uri: string; state?: string };
+    }>(`session:${sessionId}`);
+    hasPendingOAuth = !!session?.pending_oauth;
+  }
+
+  return c.json({ ...result, hasPendingOAuth });
 });
 
 // ─── Callback page HTML ─────────────────────────────────────────────────────

@@ -194,7 +194,7 @@ describe('GET /oauth/authorize', () => {
     );
   });
 
-  it('redirects to /verify/start when user has no valid verification', async () => {
+  it('redirects to frontend /verify when user has no valid verification', async () => {
     vi.mocked(findActivePartner).mockResolvedValue(mockPartner);
     vi.mocked(validateRedirectUri).mockReturnValue(true);
     vi.mocked(redis.get).mockResolvedValue({ userId: 'user-uuid' });
@@ -206,7 +206,7 @@ describe('GET /oauth/authorize', () => {
       { headers: { Cookie: 'cage_session=test-session-id' } }
     );
     expect(res.status).toBe(302);
-    expect(res.headers.get('location')).toBe('/verify/start');
+    expect(res.headers.get('location')).toBe('http://localhost:3000/verify');
     // pending_oauth must be stored in session
     expect(vi.mocked(redis.set)).toHaveBeenCalledWith(
       expect.stringContaining('session:'),

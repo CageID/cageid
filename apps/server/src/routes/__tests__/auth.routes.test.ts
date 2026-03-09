@@ -72,7 +72,7 @@ describe('POST /auth/magic-link', () => {
       jsonPost('/auth/magic-link', { email: 'user@example.com' })
     );
     expect(res.status).toBe(200);
-    expect(vi.mocked(sendMagicLink)).toHaveBeenCalledWith('user@example.com');
+    expect(vi.mocked(sendMagicLink)).toHaveBeenCalledWith('user@example.com', undefined);
   });
 
   it('returns 400 for malformed email address', async () => {
@@ -130,6 +130,7 @@ describe('GET /auth/verify', () => {
     vi.mocked(verifyMagicLink).mockResolvedValue({
       userId: 'user-uuid-123',
       email: 'user@example.com',
+      next: null,
     });
     vi.mocked(createSession).mockResolvedValue('new-session-id');
 
@@ -149,6 +150,7 @@ describe('GET /auth/verify', () => {
     vi.mocked(verifyMagicLink).mockResolvedValue({
       userId: 'user-uuid-123',
       email: 'user@example.com',
+      next: null,
     });
     vi.mocked(createSession).mockResolvedValue('new-session-id');
 

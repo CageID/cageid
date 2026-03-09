@@ -120,7 +120,7 @@ describe('auth.service', () => {
       expect(result).toEqual({ sent: true });
       expect(vi.mocked(redis.set)).toHaveBeenCalledWith(
         expect.stringMatching(/^magic_link:[a-f0-9]{64}$/),
-        { userId: 'user-uuid-123', email: 'test@example.com' },
+        { userId: 'user-uuid-123', email: 'test@example.com', next: null },
         { ex: 600 }
       );
     });
@@ -214,7 +214,7 @@ describe('auth.service', () => {
 
       const result = await verifyMagicLink('valid-token');
 
-      expect(result).toEqual({ userId: 'user-uuid-123', email: 'test@example.com' });
+      expect(result).toEqual({ userId: 'user-uuid-123', email: 'test@example.com', next: null });
     });
   });
 

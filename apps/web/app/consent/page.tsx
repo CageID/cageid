@@ -64,7 +64,7 @@ export default async function ConsentPage({
           <input type="hidden" name="consent_token" value={consentToken} />
           <button
             type="submit"
-            className="w-full rounded-lg bg-cage-dark py-2.5 text-sm font-medium text-cage-accent transition-colors hover:bg-cage-dark/90"
+            className="w-full cursor-pointer rounded-lg bg-cage-dark py-2.5 text-sm font-medium text-cage-accent transition-colors hover:bg-cage-dark/90"
           >
             Confirm — share age verification
           </button>

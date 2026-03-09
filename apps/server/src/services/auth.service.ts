@@ -22,7 +22,7 @@ export type SendMagicLinkResult = { sent: true } | { rateLimited: true };
  * Always returns { sent: true } on success — callers must never reveal
  * whether the email address already had an account.
  */
-export async function sendMagicLink(email: string): Promise<SendMagicLinkResult> {
+export async function sendMagicLink(email: string, next?: string): Promise<SendMagicLinkResult> {
   // ── Rate limiting: 3 requests per email per hour ───────────────────────────
   const rateKey = `magic_link_rate:${email}`;
   const count = await redis.incr(rateKey);
@@ -50,7 +50,7 @@ export async function sendMagicLink(email: string): Promise<SendMagicLinkResult>
   const token = randomBytes(32).toString('hex');
   await redis.set(
     `magic_link:${token}`,
-    { userId, email },
+    { userId, email, next: next ?? null },
     { ex: 600 } // 10 minutes
   );
 
@@ -85,8 +85,8 @@ export async function sendMagicLink(email: string): Promise<SendMagicLinkResult>
  */
 export async function verifyMagicLink(
   token: string
-): Promise<{ userId: string; email: string } | null> {
-  const data = await redis.getdel<{ userId: string; email: string }>(
+): Promise<{ userId: string; email: string; next: string | null } | null> {
+  const data = await redis.getdel<{ userId: string; email: string; next: string | null }>(
     `magic_link:${token}`
   );
   if (!data) return null;
@@ -97,7 +97,7 @@ export async function verifyMagicLink(
     .set({ emailVerifiedAt: new Date() })
     .where(eq(users.id, data.userId));
 
-  return { userId: data.userId, email: data.email };
+  return { userId: data.userId, email: data.email, next: data.next ?? null };
 }
 
 // ─── createSession ────────────────────────────────────────────────────────────
