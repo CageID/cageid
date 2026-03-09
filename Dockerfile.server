@@ -1,0 +1,54 @@
+# ── Stage 1: Install dependencies ────────────────────────────────────────────
+FROM node:20-slim AS deps
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+WORKDIR /app
+
+# Copy only what pnpm needs to resolve the workspace
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/server/package.json apps/server/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/typescript-config/package.json packages/typescript-config/
+COPY packages/ui/package.json packages/ui/
+
+RUN pnpm install --frozen-lockfile
+
+# ── Stage 2: Build ───────────────────────────────────────────────────────────
+FROM deps AS build
+
+# Copy source files needed for the server build
+COPY packages/typescript-config/ packages/typescript-config/
+COPY apps/server/ apps/server/
+
+RUN pnpm --filter server build
+
+# ── Stage 3: Production image ────────────────────────────────────────────────
+FROM node:20-slim AS production
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+WORKDIR /app
+
+# Copy workspace scaffolding for pnpm to resolve production deps
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/server/package.json apps/server/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/typescript-config/package.json packages/typescript-config/
+COPY packages/ui/package.json packages/ui/
+
+# Install production dependencies only
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy the compiled server output
+COPY --from=build /app/apps/server/dist apps/server/dist
+
+ENV NODE_ENV=production
+
+EXPOSE 3001
+
+CMD ["node", "apps/server/dist/index.js"]
