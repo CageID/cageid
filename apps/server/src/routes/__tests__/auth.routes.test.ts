@@ -126,7 +126,7 @@ describe('GET /auth/verify', () => {
     expect(res.status).toBe(400);
   });
 
-  it('sets cage_session cookie and returns 200 on valid token', async () => {
+  it('sets cage_session cookie and redirects to dashboard on valid token', async () => {
     vi.mocked(verifyMagicLink).mockResolvedValue({
       userId: 'user-uuid-123',
       email: 'user@example.com',
@@ -138,7 +138,8 @@ describe('GET /auth/verify', () => {
       new Request('http://localhost/auth/verify?token=valid-token')
     );
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toContain('/dashboard');
     const setCookie = res.headers.get('set-cookie');
     expect(setCookie).toContain('cage_session=new-session-id');
     expect(setCookie).toContain('HttpOnly');

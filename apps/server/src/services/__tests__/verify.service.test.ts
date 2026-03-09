@@ -12,7 +12,7 @@ vi.mock('../../db/index.js', () => ({
 }));
 
 process.env['VERIFF_API_KEY']        = 'test-api-key';
-process.env['VERIFF_WEBHOOK_SECRET'] = 'test-webhook-secret';
+process.env['VERIFF_SHARED_SECRET'] = 'test-webhook-secret';
 process.env['VERIFF_BASE_URL']       = 'https://stationapi.veriff.com';
 process.env['APP_BASE_URL']          = 'https://cageid.app';
 process.env['WEB_BASE_URL']          = 'http://localhost:3000';
@@ -231,21 +231,21 @@ describe('handleWebhook', () => {
   });
 
   it('returns { error: "invalid_signature" } on HMAC mismatch', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1' } });
     const result = await handleWebhook(body, 'bad-signature');
 
     expect(result).toEqual({ error: 'invalid_signature' });
   });
 
   it('returns { error: "invalid_signature" } for empty signature', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1' } });
     const result = await handleWebhook(body, '');
 
     expect(result).toEqual({ error: 'invalid_signature' });
   });
 
   it('returns { ok: true } and does nothing for non-approved/declined statuses', async () => {
-    const body = JSON.stringify({ status: 'resubmission_requested', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'resubmission_requested', vendorData: 'user-1' } });
     const sig = makeSignature(body);
 
     const result = await handleWebhook(body, sig);
@@ -256,7 +256,7 @@ describe('handleWebhook', () => {
   });
 
   it('returns { ok: true } and does nothing for unknown userId', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
     const sig = makeSignature(body);
     vi.mocked(db.query.users.findFirst).mockResolvedValue(undefined);
 
@@ -267,7 +267,7 @@ describe('handleWebhook', () => {
   });
 
   it('updates row to declined on declined status', async () => {
-    const body = JSON.stringify({ status: 'declined', verification: { id: 'sess-1', vendorData: 'user-1' } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'declined', vendorData: 'user-1' } });
     const sig = makeSignature(body);
     vi.mocked(db.query.users.findFirst).mockResolvedValue({
       id: 'user-1',
@@ -286,7 +286,7 @@ describe('handleWebhook', () => {
   });
 
   it('sets age_floor=21 for someone old enough (DOB 1990-01-01)', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
     const sig = makeSignature(body);
     vi.mocked(db.query.users.findFirst).mockResolvedValue({
       id: 'user-1',
@@ -307,7 +307,7 @@ describe('handleWebhook', () => {
   });
 
   it('sets age_floor=18 for someone aged 18-20 (DOB 2008-01-01)', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '2008-01-01' } } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1', person: { dateOfBirth: '2008-01-01' } } });
     const sig = makeSignature(body);
     vi.mocked(db.query.users.findFirst).mockResolvedValue({
       id: 'user-1',
@@ -328,7 +328,7 @@ describe('handleWebhook', () => {
   });
 
   it('sets status=declined and emits console.warn when Veriff approves someone under 18 (DOB 2015-06-15)', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '2015-06-15' } } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1', person: { dateOfBirth: '2015-06-15' } } });
     const sig = makeSignature(body);
     vi.mocked(db.query.users.findFirst).mockResolvedValue({
       id: 'user-1',
@@ -350,7 +350,7 @@ describe('handleWebhook', () => {
   });
 
   it('sets verifiedAt and expiresAt (~12 months) on approval', async () => {
-    const body = JSON.stringify({ status: 'approved', verification: { id: 'sess-1', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
+    const body = JSON.stringify({ status: 'success', verification: { id: 'sess-1', status: 'approved', vendorData: 'user-1', person: { dateOfBirth: '1990-01-01' } } });
     const sig = makeSignature(body);
     vi.mocked(db.query.users.findFirst).mockResolvedValue({
       id: 'user-1',

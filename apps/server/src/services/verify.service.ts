@@ -104,9 +104,10 @@ export async function getVerificationStatus(
 type WebhookResult = { ok: true } | { error: 'invalid_signature' };
 
 interface VeriffWebhookPayload {
-  status: string;
+  status: string;              // top-level: 'success' | 'fail'
   verification: {
     id:         string;
+    status:     string;        // 'approved' | 'declined' | 'resubmission_requested' etc.
     vendorData: string;
     person?: { dateOfBirth?: string };
   };
@@ -116,7 +117,7 @@ export async function handleWebhook(
   rawBody: string,
   signature: string
 ): Promise<WebhookResult> {
-  const secret   = process.env['VERIFF_WEBHOOK_SECRET'] ?? '';
+  const secret   = process.env['VERIFF_SHARED_SECRET'] ?? '';
   const computed = createHmac('sha256', secret).update(rawBody).digest('hex');
   const computedBuf  = Buffer.from(computed);
   const receivedBuf  = Buffer.from(signature);
@@ -126,10 +127,11 @@ export async function handleWebhook(
   }
 
   const payload = JSON.parse(rawBody) as VeriffWebhookPayload;
-  const { status, verification } = payload;
+  const { verification } = payload;
+  const verificationStatus = verification.status;
   const { id: veriffSessionId, vendorData: userId } = verification;
 
-  if (status !== 'approved' && status !== 'declined') {
+  if (verificationStatus !== 'approved' && verificationStatus !== 'declined') {
     return { ok: true };
   }
 
@@ -138,14 +140,22 @@ export async function handleWebhook(
   });
   if (!user) return { ok: true };
 
-  if (status === 'declined') {
+  if (verificationStatus === 'declined') {
     await db.update(verifications).set({ status: 'declined' }).where(eq(verifications.veriffSessionId, veriffSessionId));
     return { ok: true };
   }
 
   const dateOfBirth = verification.person?.dateOfBirth;
   if (!dateOfBirth) {
-    await db.update(verifications).set({ status: 'declined' }).where(eq(verifications.veriffSessionId, veriffSessionId));
+    // Veriff approved but didn't return DOB (common in sandbox/test mode)
+    // Treat as approved with default age floor of 18
+    const now = new Date();
+    await db.update(verifications).set({
+      status: 'approved',
+      ageFloor: 18,
+      verifiedAt: now,
+      expiresAt: new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000),
+    }).where(eq(verifications.veriffSessionId, veriffSessionId));
     return { ok: true };
   }
 

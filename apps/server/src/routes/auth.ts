@@ -67,7 +67,8 @@ authRoutes.get('/verify', async (c) => {
     path: '/',
   });
 
-  return c.json({ message: 'Authenticated successfully' });
+  const webBase = process.env['WEB_BASE_URL'] ?? 'https://cageid.app';
+  return c.redirect(`${webBase}/dashboard`);
 });
 
 // ─── POST /auth/logout ────────────────────────────────────────────────────────

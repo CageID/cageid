@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from 'crypto';
 import { Resend } from 'resend';
 import { redis } from '../lib/redis.js';
 import { db } from '../db/index.js';
-import { users } from '../db/schema.js';
+import { users, verifications, partnerSubs } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 
 // ─── Resend client (module-level singleton) ───────────────────────────────────
@@ -55,8 +55,8 @@ export async function sendMagicLink(email: string): Promise<SendMagicLinkResult>
   );
 
   // ── Send email via Resend ──────────────────────────────────────────────────
-  const baseUrl = process.env['APP_BASE_URL'] ?? 'https://cageid.app';
-  const magicLinkUrl = `${baseUrl}/auth/verify?token=${token}`;
+  const webBase = process.env['WEB_BASE_URL'] ?? 'https://cageid.app';
+  const magicLinkUrl = `${webBase}/api/auth/verify?token=${token}`;
 
   const { error: sendError } = await resend.emails.send({
     from: 'CAGE <noreply@cageid.app>',
@@ -131,5 +131,8 @@ export async function deleteSession(sessionId: string): Promise<void> {
  * and partner_subs automatically.
  */
 export async function deleteAccount(userId: string): Promise<void> {
+  // Delete child rows first — FK constraints have no CASCADE
+  await db.delete(partnerSubs).where(eq(partnerSubs.userId, userId));
+  await db.delete(verifications).where(eq(verifications.userId, userId));
   await db.delete(users).where(eq(users.id, userId));
 }
