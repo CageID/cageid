@@ -161,6 +161,44 @@ describe('GET /auth/verify', () => {
 
     expect(vi.mocked(createSession)).toHaveBeenCalledWith('user-uuid-123');
   });
+
+  it('returns HTML page with session data when source=extension', async () => {
+    vi.mocked(verifyMagicLink).mockResolvedValue({
+      userId: 'user-uuid-123',
+      email: 'user@example.com',
+      next: null,
+    });
+    vi.mocked(createSession).mockResolvedValue('ext-session-id');
+
+    const app = makeApp();
+    const res = await app.fetch(
+      new Request('http://localhost/auth/verify?token=valid-token&source=extension')
+    );
+
+    expect(res.status).toBe(200);
+    const html = await res.text();
+    expect(html).toContain('cage-ext-session');
+    expect(html).toContain('data-session-id="ext-session-id"');
+    expect(html).toContain('data-email="user@example.com"');
+    expect(html).toContain('Signed in to CAGE extension');
+  });
+
+  it('does not set cookie when source=extension', async () => {
+    vi.mocked(verifyMagicLink).mockResolvedValue({
+      userId: 'user-uuid-123',
+      email: 'user@example.com',
+      next: null,
+    });
+    vi.mocked(createSession).mockResolvedValue('ext-session-id');
+
+    const app = makeApp();
+    const res = await app.fetch(
+      new Request('http://localhost/auth/verify?token=valid-token&source=extension')
+    );
+
+    const setCookie = res.headers.get('set-cookie');
+    expect(setCookie).toBeNull();
+  });
 });
 
 // ─── POST /auth/logout ────────────────────────────────────────────────────────

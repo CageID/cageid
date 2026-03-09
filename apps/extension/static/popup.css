@@ -1,0 +1,334 @@
+/* ─── CAGE Extension Popup Styles ───────────────────────────── */
+
+:root {
+  --cage-dark: #282e00;
+  --cage-mid: #999c7e;
+  --cage-accent: #a0ff57;
+  --cage-bg: #fafaf7;
+  --cage-bg-dark: #1a1d00;
+  --cage-text: #1c1f00;
+  --cage-text-dark: #e8e8d8;
+  --cage-border: rgba(153, 156, 126, 0.2);
+  --cage-error: #dc2626;
+  --cage-amber: #d97706;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--cage-bg);
+  color: var(--cage-text);
+  width: 360px;
+  min-height: 200px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+
+.header {
+  background: var(--cage-dark);
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--cage-text-dark);
+}
+
+/* ─── State containers ───────────────────────────────────────── */
+
+.state {
+  flex: 1;
+  padding: 16px 20px;
+}
+
+/* ─── Hero section ───────────────────────────────────────────── */
+
+.hero {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.tagline {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cage-dark);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--cage-mid);
+  line-height: 1.4;
+}
+
+.mail-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+/* ─── Card ───────────────────────────────────────────────────── */
+
+.card {
+  background: white;
+  border: 1px solid var(--cage-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* ─── Form elements ──────────────────────────────────────────── */
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cage-dark);
+  margin-bottom: 4px;
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--cage-border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--cage-text);
+  background: white;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input::placeholder {
+  color: var(--cage-mid);
+}
+
+.input:focus {
+  border-color: var(--cage-dark);
+  box-shadow: 0 0 0 2px rgba(40, 46, 0, 0.1);
+}
+
+.error {
+  font-size: 12px;
+  color: var(--cage-error);
+  margin-top: 6px;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────── */
+
+.btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  margin-top: 12px;
+  background: var(--cage-dark);
+  color: var(--cage-accent);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-primary:hover {
+  background: rgba(40, 46, 0, 0.9);
+}
+
+.btn-primary:disabled {
+  background: var(--cage-mid);
+  color: var(--cage-bg);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--cage-dark);
+  border: 1px solid var(--cage-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-secondary:hover {
+  background: rgba(153, 156, 126, 0.08);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-text {
+  width: 100%;
+  padding: 8px 16px;
+  margin-top: 8px;
+  background: transparent;
+  color: var(--cage-mid);
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.btn-text:hover {
+  color: var(--cage-dark);
+}
+
+/* ─── Status section (logged in) ─────────────────────────────── */
+
+.status-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.status-card,
+.info-card,
+.sites-card {
+  background: white;
+  border: 1px solid var(--cage-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.status-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cage-dark);
+}
+
+.status-msg {
+  font-size: 13px;
+  color: var(--cage-mid);
+  line-height: 1.4;
+}
+
+/* ─── Badge ──────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badge-verified {
+  background: rgba(160, 255, 87, 0.15);
+  color: var(--cage-dark);
+}
+.badge-verified::before {
+  background: var(--cage-accent);
+}
+
+.badge-pending {
+  background: rgba(217, 119, 6, 0.15);
+  color: var(--cage-amber);
+}
+.badge-pending::before {
+  background: var(--cage-amber);
+}
+
+.badge-declined {
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--cage-error);
+}
+.badge-declined::before {
+  background: var(--cage-error);
+}
+
+.badge-none {
+  background: rgba(153, 156, 126, 0.15);
+  color: var(--cage-mid);
+}
+.badge-none::before {
+  background: var(--cage-mid);
+}
+
+/* ─── Info rows ──────────────────────────────────────────────── */
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 13px;
+  color: var(--cage-mid);
+}
+
+.info-value {
+  font-size: 13px;
+  color: var(--cage-dark);
+  font-weight: 500;
+}
+
+/* ─── Sites ──────────────────────────────────────────────────── */
+
+.sites-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cage-dark);
+  margin-bottom: 6px;
+}
+
+.sites-empty {
+  font-size: 12px;
+  color: var(--cage-mid);
+}
+
+/* ─── Hint ───────────────────────────────────────────────────── */
+
+.hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--cage-mid);
+  margin-top: 12px;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+
+.footer {
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--cage-mid);
+}

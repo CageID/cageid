@@ -68,4 +68,44 @@ describe('requireAuth middleware', () => {
     );
     expect(vi.mocked(redis.get)).toHaveBeenCalledWith('session:abc123');
   });
+
+  it('accepts Bearer token in Authorization header', async () => {
+    vi.mocked(redis.get).mockResolvedValue({ userId: 'user-uuid-456' });
+    const app = makeApp();
+    const res = await app.fetch(
+      new Request('http://localhost/protected', {
+        headers: { Authorization: 'Bearer bearer-session-id' },
+      })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json() as Record<string, string>;
+    expect(body.userId).toBe('user-uuid-456');
+    expect(vi.mocked(redis.get)).toHaveBeenCalledWith('session:bearer-session-id');
+  });
+
+  it('returns 401 for invalid Bearer token', async () => {
+    vi.mocked(redis.get).mockResolvedValue(null);
+    const app = makeApp();
+    const res = await app.fetch(
+      new Request('http://localhost/protected', {
+        headers: { Authorization: 'Bearer invalid-token' },
+      })
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it('prefers Bearer token over cookie when both are present', async () => {
+    vi.mocked(redis.get).mockResolvedValue({ userId: 'user-from-bearer' });
+    const app = makeApp();
+    const res = await app.fetch(
+      new Request('http://localhost/protected', {
+        headers: {
+          Authorization: 'Bearer bearer-id',
+          Cookie: 'cage_session=cookie-id',
+        },
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(vi.mocked(redis.get)).toHaveBeenCalledWith('session:bearer-id');
+  });
 });

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAGE</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <!-- Header -->
+    <header class="header">
+      <span class="logo">CAGE</span>
+    </header>
+
+    <!-- Logged-out state -->
+    <div id="state-logged-out" class="state" style="display: none;">
+      <div class="hero">
+        <h1 class="tagline">Check Age, Go Everywhere</h1>
+        <p class="subtitle">Verify your age once. Access age-restricted sites without re-verifying.</p>
+      </div>
+      <div class="card">
+        <form id="login-form">
+          <label for="email" class="label">Email address</label>
+          <input
+            id="email"
+            type="email"
+            required
+            placeholder="you@example.com"
+            class="input"
+            autocomplete="email"
+          />
+          <p id="login-error" class="error" style="display: none;"></p>
+          <button type="submit" id="send-btn" class="btn-primary">
+            Send Magic Link
+          </button>
+        </form>
+      </div>
+      <p class="hint">No password needed — we'll email you a secure link.</p>
+    </div>
+
+    <!-- Check email state -->
+    <div id="state-check-email" class="state" style="display: none;">
+      <div class="hero">
+        <div class="mail-icon">&#9993;</div>
+        <h1 class="tagline">Check your email</h1>
+        <p class="subtitle">We sent a sign-in link to <strong id="sent-email"></strong></p>
+        <p class="subtitle">Click the link in your email to sign in to the extension.</p>
+      </div>
+      <div class="card">
+        <button id="resend-btn" class="btn-secondary" disabled>
+          Resend link <span id="resend-timer"></span>
+        </button>
+        <button id="back-btn" class="btn-text">Use a different email</button>
+      </div>
+    </div>
+
+    <!-- Logged-in state -->
+    <div id="state-logged-in" class="state" style="display: none;">
+      <div class="status-section">
+        <div class="status-card">
+          <div class="status-header">
+            <span class="status-label">Age Verification</span>
+            <span id="status-badge" class="badge"></span>
+          </div>
+          <p id="status-message" class="status-msg"></p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span id="user-email" class="info-value"></span>
+          </div>
+        </div>
+
+        <div class="sites-card">
+          <h2 class="sites-title">Connected sites</h2>
+          <p id="sites-list" class="sites-empty">No sites connected yet</p>
+        </div>
+      </div>
+
+      <button id="logout-btn" class="btn-secondary">Log out</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      CAGE — Confirmed Age, Granted Entry
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

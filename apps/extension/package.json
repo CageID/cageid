@@ -1,0 +1,16 @@
+{
+  "name": "cage-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/copy-static.js && tsc --watch",
+    "build": "tsc && node scripts/copy-static.js",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/chrome": "^0.0.287",
+    "typescript": "5.9.2"
+  }
+}

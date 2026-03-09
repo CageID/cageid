@@ -62,6 +62,13 @@ authRoutes.get('/verify', async (c) => {
 
   const sessionId = await createSession(data.userId);
 
+  // ── Extension login: return HTML page with session data for content script ──
+  const source = c.req.query('source');
+  if (source === 'extension') {
+    return c.html(extensionVerifyPage(sessionId, data.email));
+  }
+
+  // ── Normal web login: set cookie and redirect ──────────────────────────────
   setCookie(c, 'cage_session', sessionId, {
     httpOnly: true,
     secure: true,
@@ -108,3 +115,49 @@ authRoutes.delete('/account', requireAuth, async (c) => {
 
   return c.json({ message: 'Account deleted' });
 });
+
+// ─── Extension verify page HTML ──────────────────────────────────────────────
+
+function extensionVerifyPage(sessionId: string, email: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAGE — Extension Sign In</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; margin: 0; background: #fafaf7; color: #1c1f00;
+    }
+    .card {
+      text-align: center; padding: 2.5rem; max-width: 400px;
+      background: white; border-radius: 16px;
+      border: 1px solid rgba(153, 156, 126, 0.2);
+    }
+    .logo { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .check {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(160, 255, 87, 0.15); display: flex;
+      align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 24px;
+    }
+    h1 { font-size: 18px; font-weight: 600; margin: 0 0 0.5rem; }
+    p { color: #999c7e; font-size: 14px; margin: 0; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">CAGE</div>
+    <div class="check">\u2713</div>
+    <h1>Signed in to CAGE extension</h1>
+    <p>You can close this tab and return to the extension.</p>
+  </div>
+  <div id="cage-ext-session"
+       data-session-id="${sessionId}"
+       data-email="${email}"
+       style="display:none;"></div>
+</body>
+</html>`;
+}
