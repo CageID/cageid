@@ -35,9 +35,6 @@ async function ensureKeys(): Promise<void> {
     );
   }
 
-  // Debug: log first/last line to verify PEM format (no secrets leaked)
-  const privLines = privateKeyPem.split("\n").filter(Boolean);
-  console.log(`JWT_PRIVATE_KEY: ${privLines.length} lines, first="${privLines[0]}", last="${privLines[privLines.length - 1]}"`);
 
   _privateKey = await importPKCS8(privateKeyPem, ALG);
   _publicKey = await importSPKI(publicKeyPem, ALG);

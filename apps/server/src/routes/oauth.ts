@@ -104,10 +104,11 @@ oauthRoutes.get("/authorize", async (c) => {
 
   // 4. Check verification status
   const verification = await db.query.verifications.findFirst({
-    where: (v, { eq, and, gt }) =>
+    where: (v, { eq, and, gt, isNotNull }) =>
       and(
         eq(v.userId, userId),
         eq(v.status, "approved"),
+        isNotNull(v.expiresAt),
         gt(v.expiresAt!, new Date())
       ),
     orderBy: (v, { desc }) => [desc(v.createdAt)],
@@ -184,10 +185,11 @@ oauthRoutes.post("/extension-authorize", requireAuth, async (c) => {
 
   // 3. Check verification status
   const verification = await db.query.verifications.findFirst({
-    where: (v, { eq, and, gt }) =>
+    where: (v, { eq, and, gt, isNotNull }) =>
       and(
         eq(v.userId, userId),
         eq(v.status, "approved"),
+        isNotNull(v.expiresAt),
         gt(v.expiresAt!, new Date())
       ),
     orderBy: (v, { desc }) => [desc(v.createdAt)],
