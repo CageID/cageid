@@ -108,7 +108,7 @@ app.get('/callback', async (c) => {
     return c.html(errorPage('Missing Code', 'No authorization code was returned by CAGE.'));
   }
 
-  let tokenData: { id_token?: string; error?: string };
+  let tokenData: { id_token?: string; error?: string; error_description?: string };
   try {
     const tokenRes = await fetch(`${CAGE_SERVER}/oauth/token`, {
       method: 'POST',
@@ -118,11 +118,14 @@ app.get('/callback', async (c) => {
         code,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
+        redirect_uri: `${SELF_URL}/callback`,
       }),
     });
-    tokenData = (await tokenRes.json()) as { id_token?: string; error?: string };
-  } catch {
-    return c.html(errorPage('Token Exchange Failed', `Could not reach CAGE server at ${escapeHtml(CAGE_SERVER)}`));
+    tokenData = (await tokenRes.json()) as { id_token?: string; error?: string; error_description?: string };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('Token exchange fetch failed:', msg);
+    return c.html(errorPage('Token Exchange Failed', `Could not reach CAGE server at ${escapeHtml(CAGE_SERVER)}: ${escapeHtml(msg)}`));
   }
 
   if (tokenData.error || !tokenData.id_token) {
