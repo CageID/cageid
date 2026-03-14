@@ -15,9 +15,15 @@ export default async function LoginPage({
   // redirect through the web proxy so the session cookie is included.
   if (auth.authenticated && params.next) {
     const appBase = process.env["APP_BASE_URL"] ?? "http://localhost:3001";
-    if (params.next.startsWith(appBase)) {
-      const nextPath = params.next.slice(appBase.length);
-      redirect(`/api${nextPath}`);
+    // Match by hostname regardless of protocol (http vs https)
+    try {
+      const nextUrl = new URL(params.next);
+      const baseUrl = new URL(appBase);
+      if (nextUrl.host === baseUrl.host) {
+        redirect(`/api${nextUrl.pathname}${nextUrl.search}`);
+      }
+    } catch {
+      // Invalid URL — fall through
     }
     redirect(params.next);
   }

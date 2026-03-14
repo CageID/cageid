@@ -83,10 +83,18 @@ authRoutes.get('/verify', async (c) => {
   // If a `next` URL was stored (e.g. from OAuth flow), redirect there instead of dashboard.
   // Rewrite server-direct URLs to go through the frontend proxy so the session cookie
   // (set on the frontend's domain) is included in the subsequent request.
+  // Match by hostname regardless of protocol (http vs https)
   const appBase = process.env['APP_BASE_URL'] ?? 'http://localhost:3001';
-  if (data.next && data.next.startsWith(appBase)) {
-    const nextPath = data.next.slice(appBase.length); // e.g., "/oauth/authorize?..."
-    return c.redirect(`${webBase}/api${nextPath}`);
+  if (data.next) {
+    try {
+      const nextUrl = new URL(data.next);
+      const baseUrl = new URL(appBase);
+      if (nextUrl.host === baseUrl.host) {
+        return c.redirect(`${webBase}/api${nextUrl.pathname}${nextUrl.search}`);
+      }
+    } catch {
+      // Invalid URL — fall through to dashboard
+    }
   }
 
   return c.redirect(`${webBase}/dashboard`);
