@@ -9,7 +9,7 @@ const CLIENT_ID = process.env['DEMO_CLIENT_ID'] ?? '';
 const CLIENT_SECRET = process.env['DEMO_CLIENT_SECRET'] ?? '';
 const CAGE_SERVER = process.env['CAGE_SERVER_URL'] ?? 'http://localhost:3001';
 const PORT = Number(process.env['PORT'] ?? '3003');
-const SELF_URL = `http://localhost:${PORT}`;
+const SELF_URL = process.env['SELF_URL'] ?? `http://localhost:${PORT}`;
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
   console.error('Missing DEMO_CLIENT_ID or DEMO_CLIENT_SECRET in .env');
