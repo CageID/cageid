@@ -8,6 +8,9 @@ const app = new Hono();
 const CLIENT_ID = process.env['DEMO_CLIENT_ID'] ?? '';
 const CLIENT_SECRET = process.env['DEMO_CLIENT_SECRET'] ?? '';
 const CAGE_SERVER = process.env['CAGE_SERVER_URL'] ?? 'http://localhost:3001';
+// The authorize URL goes through the web proxy so the session cookie is included.
+// Token exchange still goes directly to the server (server-to-server, no cookie needed).
+const CAGE_WEB = process.env['CAGE_WEB_URL'] ?? 'http://localhost:3000';
 const PORT = Number(process.env['PORT'] ?? '3003');
 const SELF_URL = process.env['SELF_URL'] ?? `http://localhost:${PORT}`;
 
@@ -26,7 +29,7 @@ app.get('/', (c) => {
     path: '/',
   });
 
-  const authorizeUrl = new URL('/oauth/authorize', CAGE_SERVER);
+  const authorizeUrl = new URL('/api/oauth/authorize', CAGE_WEB);
   authorizeUrl.searchParams.set('client_id', CLIENT_ID);
   authorizeUrl.searchParams.set('redirect_uri', `${SELF_URL}/callback`);
   authorizeUrl.searchParams.set('response_type', 'code');
