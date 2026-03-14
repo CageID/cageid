@@ -42,8 +42,7 @@ chrome.runtime.onMessage.addListener(
 
 // ─── OAuth Silent Pass-Through (Phase 2) ────────────────────────────────────
 
-// TODO: Update to api.cageid.app when custom domains are configured.
-const SERVER_URL = 'https://server-production-0ea14.up.railway.app';
+const SERVER_URL = 'https://api.cageid.app';
 
 chrome.webNavigation.onBeforeNavigate.addListener(
   (details) => {

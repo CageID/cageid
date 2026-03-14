@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://cageid-web.vercel.app/*",
+        "https://cageid.app/*",
         "http://localhost:3000/*"
       ],
       "js": ["content.js"],

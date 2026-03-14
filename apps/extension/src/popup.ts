@@ -7,8 +7,7 @@
 
 // ─── Config (inlined — keep in sync with config.ts) ───────────────────────────
 
-// TODO: Update to cageid.app / api.cageid.app when custom domains are configured.
-const SERVER_URL = 'https://server-production-0ea14.up.railway.app';
+const SERVER_URL = 'https://api.cageid.app';
 const STORAGE_KEYS = {
   SESSION_ID: 'cage_session_id',
   EMAIL: 'cage_email',
