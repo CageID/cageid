@@ -16,8 +16,9 @@ let _jwks: { keys: object[] } | null = null;
 async function ensureKeys(): Promise<void> {
   if (_privateKey && _publicKey) return;
 
-  const privateKeyPem = process.env["JWT_PRIVATE_KEY"];
-  const publicKeyPem = process.env["JWT_PUBLIC_KEY"];
+  // Railway/Doppler may store PEM keys with literal '\n' instead of real newlines
+  const privateKeyPem = process.env["JWT_PRIVATE_KEY"]?.replace(/\\n/g, "\n");
+  const publicKeyPem = process.env["JWT_PUBLIC_KEY"]?.replace(/\\n/g, "\n");
 
   if (!privateKeyPem || !publicKeyPem) {
     throw new Error(
