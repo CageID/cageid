@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import type { Context } from "hono";
 import { getCookie } from "hono/cookie";
 import { getJwks, generateAuthCode, signIdToken } from "../services/token.service.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 import {
   findActivePartner,
   validateClientSecret,
@@ -151,6 +152,75 @@ oauthRoutes.get("/authorize", async (c) => {
   }
 
   return issueAuthCode(c, userId, partner.id, redirect_uri, state ?? "");
+});
+
+// ─── Extension Silent Authorize ─────────────────────────────────────────────
+
+oauthRoutes.post("/extension-authorize", requireAuth, async (c) => {
+  const userId = c.get("userId");
+  const { client_id, redirect_uri, response_type, state } = await c.req.json<{
+    client_id: string;
+    redirect_uri: string;
+    response_type: string;
+    state?: string;
+  }>();
+
+  // 1. Basic param validation
+  if (!client_id || !redirect_uri || !response_type) {
+    return c.json({ error: "invalid_request", error_description: "Missing required parameters" }, 400);
+  }
+  if (response_type !== "code") {
+    return c.json({ error: "invalid_request", error_description: "Unsupported response_type" }, 400);
+  }
+
+  // 2. Validate partner
+  const partner = await findActivePartner(client_id);
+  if (!partner) {
+    return c.json({ error: "invalid_client", error_description: "Unknown or inactive client" }, 400);
+  }
+  if (!validateRedirectUri(partner, redirect_uri)) {
+    return c.json({ error: "invalid_request", error_description: "Invalid redirect_uri" }, 400);
+  }
+
+  // 3. Check verification status
+  const verification = await db.query.verifications.findFirst({
+    where: (v, { eq, and, gt }) =>
+      and(
+        eq(v.userId, userId),
+        eq(v.status, "approved"),
+        gt(v.expiresAt!, new Date())
+      ),
+    orderBy: (v, { desc }) => [desc(v.createdAt)],
+  });
+
+  if (!verification) {
+    return c.json({ error: "verification_required", error_description: "User not verified" }, 403);
+  }
+
+  // 4. Age floor check
+  if ((verification.ageFloor ?? 0) < partner.ageFloorRequired) {
+    return c.json({ error: "access_denied", error_description: "Age requirement not met" }, 403);
+  }
+
+  // 5. Check prior consent (partner_subs row must exist)
+  const existingSub = await db.query.partnerSubs.findFirst({
+    where: (ps, { eq, and }) =>
+      and(eq(ps.userId, userId), eq(ps.partnerId, partner.id)),
+  });
+
+  if (!existingSub) {
+    return c.json({ error: "consent_required", error_description: "User has not consented to this partner" }, 403);
+  }
+
+  // 6. Issue auth code
+  const code = generateAuthCode();
+  await redis.set(
+    `oauth_code:${code}`,
+    { userId, partnerId: partner.id, redirectUri: redirect_uri },
+    { ex: 60 }
+  );
+
+  return c.json({ code, redirect_uri, state: state ?? null });
 });
 
 // ─── Consent POST ──────────────────────────────────────────────────────────

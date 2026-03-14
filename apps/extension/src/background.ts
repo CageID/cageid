@@ -40,17 +40,37 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-// ─── OAuth Detection (Phase 2 — log only) ──────────────────────────────────────
+// ─── OAuth Silent Pass-Through (Phase 2) ────────────────────────────────────
+
+// TODO: Update to api.cageid.app when custom domains are configured.
+const SERVER_URL = 'https://server-production-0ea14.up.railway.app';
 
 chrome.webNavigation.onBeforeNavigate.addListener(
   (details) => {
-    const url = details.url;
+    // Only intercept top-level navigations (not iframes)
+    if (details.frameId !== 0) return;
 
-    // Check if this is an OAuth authorize request to CAGE
-    if (url.includes('/oauth/authorize')) {
-      console.log('[CAGE] OAuth authorize detected:', url);
-      // Phase 2: Intercept and handle silently
+    let url: URL;
+    try {
+      url = new URL(details.url);
+    } catch {
+      return;
     }
+
+    // Must be an /oauth/authorize request
+    if (!url.pathname.endsWith('/oauth/authorize')) return;
+
+    const clientId = url.searchParams.get('client_id');
+    const redirectUri = url.searchParams.get('redirect_uri');
+    const responseType = url.searchParams.get('response_type');
+    const state = url.searchParams.get('state');
+
+    if (!clientId || !redirectUri || responseType !== 'code') return;
+
+    console.log('[CAGE] OAuth authorize detected, attempting silent pass-through...');
+
+    // Attempt silent authorization
+    attemptSilentAuth(details.tabId, { clientId, redirectUri, responseType, state });
   },
   {
     url: [
@@ -60,6 +80,60 @@ chrome.webNavigation.onBeforeNavigate.addListener(
     ],
   }
 );
+
+async function attemptSilentAuth(
+  tabId: number,
+  params: { clientId: string; redirectUri: string; responseType: string; state: string | null }
+) {
+  try {
+    // 1. Get session from storage
+    const stored = await chrome.storage.local.get([STORAGE_KEYS.SESSION_ID]);
+    const sessionId = stored[STORAGE_KEYS.SESSION_ID];
+
+    if (!sessionId) {
+      console.log('[CAGE] No session — falling through to normal OAuth flow');
+      return;
+    }
+
+    // 2. Call extension-authorize endpoint
+    const response = await fetch(`${SERVER_URL}/oauth/extension-authorize`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify({
+        client_id: params.clientId,
+        redirect_uri: params.redirectUri,
+        response_type: params.responseType,
+        state: params.state ?? undefined,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      console.log('[CAGE] Silent auth declined:', (err as { error?: string }).error ?? response.status, '— falling through');
+      return;
+    }
+
+    const { code, redirect_uri, state } = await response.json() as {
+      code: string;
+      redirect_uri: string;
+      state: string | null;
+    };
+
+    // 3. Build the callback URL and redirect the tab
+    const callbackUrl = new URL(redirect_uri);
+    callbackUrl.searchParams.set('code', code);
+    if (state) callbackUrl.searchParams.set('state', state);
+
+    console.log('[CAGE] Silent auth success — redirecting to partner callback');
+    chrome.tabs.update(tabId, { url: callbackUrl.toString() });
+  } catch (err) {
+    console.error('[CAGE] Silent auth error:', err);
+    // Let normal flow proceed on any error
+  }
+}
 
 // ─── Extension Lifecycle ───────────────────────────────────────────────────────
 
