@@ -36,8 +36,9 @@ authRoutes.post('/magic-link', async (c) => {
 
   // Optional: where to redirect after login (used by OAuth flow)
   const next = typeof body['next'] === 'string' ? body['next'] : undefined;
+  const source = typeof body['source'] === 'string' ? body['source'] : undefined;
 
-  const result = await sendMagicLink(email, next);
+  const result = await sendMagicLink(email, next, source);
 
   if ('rateLimited' in result) {
     return c.json({ error: 'Too many requests. Please try again later.' }, 429);

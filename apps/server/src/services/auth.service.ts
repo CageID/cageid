@@ -22,7 +22,7 @@ export type SendMagicLinkResult = { sent: true } | { rateLimited: true };
  * Always returns { sent: true } on success — callers must never reveal
  * whether the email address already had an account.
  */
-export async function sendMagicLink(email: string, next?: string): Promise<SendMagicLinkResult> {
+export async function sendMagicLink(email: string, next?: string, source?: string): Promise<SendMagicLinkResult> {
   // ── Rate limiting: 3 requests per email per hour ───────────────────────────
   const rateKey = `magic_link_rate:${email}`;
   const count = await redis.incr(rateKey);
@@ -56,7 +56,8 @@ export async function sendMagicLink(email: string, next?: string): Promise<SendM
 
   // ── Send email via Resend ──────────────────────────────────────────────────
   const webBase = process.env['WEB_BASE_URL'] ?? 'https://cageid.app';
-  const magicLinkUrl = `${webBase}/api/auth/verify?token=${token}`;
+  const sourceParam = source ? `&source=${source}` : '';
+  const magicLinkUrl = `${webBase}/api/auth/verify?token=${token}${sourceParam}`;
 
   const { error: sendError } = await resend.emails.send({
     from: 'CAGE <noreply@cageid.app>',

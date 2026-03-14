@@ -72,7 +72,7 @@ describe('POST /auth/magic-link', () => {
       jsonPost('/auth/magic-link', { email: 'user@example.com' })
     );
     expect(res.status).toBe(200);
-    expect(vi.mocked(sendMagicLink)).toHaveBeenCalledWith('user@example.com', undefined);
+    expect(vi.mocked(sendMagicLink)).toHaveBeenCalledWith('user@example.com', undefined, undefined);
   });
 
   it('returns 400 for malformed email address', async () => {
