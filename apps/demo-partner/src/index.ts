@@ -121,6 +121,11 @@ app.get('/callback', async (c) => {
         redirect_uri: `${SELF_URL}/callback`,
       }),
     });
+    if (!tokenRes.ok) {
+      const text = await tokenRes.text();
+      console.error('Token exchange failed:', tokenRes.status, text);
+      return c.html(errorPage('Token Exchange Failed', `CAGE server returned ${tokenRes.status}: ${escapeHtml(text.slice(0, 200))}`));
+    }
     tokenData = (await tokenRes.json()) as { id_token?: string; error?: string; error_description?: string };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
