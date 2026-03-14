@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
+import { CageLogo } from "./components/cage-logo";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -23,9 +24,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} antialiased`}>
         <div className="min-h-screen flex flex-col">
           {/* Header */}
-          <header className="py-6 text-center">
-            <Link href="/" className="text-xl font-semibold tracking-tight text-cage-dark dark:text-cage-text-dark">
-              CAGE
+          <header className="py-6 flex justify-center">
+            <Link href="/">
+              <CageLogo className="h-[100px] w-auto" />
             </Link>
           </header>
 
