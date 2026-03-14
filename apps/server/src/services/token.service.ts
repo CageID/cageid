@@ -16,15 +16,28 @@ let _jwks: { keys: object[] } | null = null;
 async function ensureKeys(): Promise<void> {
   if (_privateKey && _publicKey) return;
 
-  // Railway/Doppler may store PEM keys with literal '\n' instead of real newlines
-  const privateKeyPem = process.env["JWT_PRIVATE_KEY"]?.replace(/\\n/g, "\n");
-  const publicKeyPem = process.env["JWT_PUBLIC_KEY"]?.replace(/\\n/g, "\n");
+  // Railway/Doppler may store PEM keys with literal '\n' instead of real newlines.
+  // Also trim whitespace and strip surrounding quotes that some platforms add.
+  let privateKeyPem = process.env["JWT_PRIVATE_KEY"]?.replace(/\\n/g, "\n").trim();
+  let publicKeyPem = process.env["JWT_PUBLIC_KEY"]?.replace(/\\n/g, "\n").trim();
+
+  // Strip wrapping quotes if present
+  if (privateKeyPem?.startsWith('"') && privateKeyPem.endsWith('"')) {
+    privateKeyPem = privateKeyPem.slice(1, -1).replace(/\\n/g, "\n");
+  }
+  if (publicKeyPem?.startsWith('"') && publicKeyPem.endsWith('"')) {
+    publicKeyPem = publicKeyPem.slice(1, -1).replace(/\\n/g, "\n");
+  }
 
   if (!privateKeyPem || !publicKeyPem) {
     throw new Error(
       "JWT_PRIVATE_KEY and JWT_PUBLIC_KEY environment variables are required"
     );
   }
+
+  // Debug: log first/last line to verify PEM format (no secrets leaked)
+  const privLines = privateKeyPem.split("\n").filter(Boolean);
+  console.log(`JWT_PRIVATE_KEY: ${privLines.length} lines, first="${privLines[0]}", last="${privLines[privLines.length - 1]}"`);
 
   _privateKey = await importPKCS8(privateKeyPem, ALG);
   _publicKey = await importSPKI(publicKeyPem, ALG);
