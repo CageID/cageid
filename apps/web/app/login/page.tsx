@@ -1,7 +1,32 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { checkAuth } from "../lib/auth";
 import { LoginForm } from "./login-form";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const params = await searchParams;
+  const auth = await checkAuth();
+
+  // If already logged in and there's a `next` URL (e.g. from OAuth flow),
+  // redirect through the web proxy so the session cookie is included.
+  if (auth.authenticated && params.next) {
+    const appBase = process.env["APP_BASE_URL"] ?? "http://localhost:3001";
+    if (params.next.startsWith(appBase)) {
+      const nextPath = params.next.slice(appBase.length);
+      redirect(`/api${nextPath}`);
+    }
+    redirect(params.next);
+  }
+
+  // If already logged in with no next, go to dashboard
+  if (auth.authenticated) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="py-16">
       <div className="mb-8 text-center">
