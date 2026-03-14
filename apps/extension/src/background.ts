@@ -69,8 +69,12 @@ chrome.webNavigation.onBeforeNavigate.addListener(
 
     console.log('[CAGE] OAuth authorize detected, attempting silent pass-through...');
 
-    // Attempt silent authorization
-    attemptSilentAuth(details.tabId, { clientId, redirectUri, responseType, state });
+    // Capture the partner page URL before the navigation proceeds,
+    // so we can navigate back to it if consent is needed.
+    chrome.tabs.get(details.tabId).then((tab) => {
+      const partnerPageUrl = tab.url;
+      attemptSilentAuth(details.tabId, { clientId, redirectUri, responseType, state }, partnerPageUrl);
+    });
   },
   {
     url: [
@@ -86,6 +90,7 @@ let pendingConsent: {
   tabId: number;
   params: { clientId: string; redirectUri: string; responseType: string; state: string | null };
   sessionId: string;
+  partnerPageUrl?: string;
 } | null = null;
 
 // Listen for consent overlay responses
@@ -97,15 +102,23 @@ chrome.runtime.onMessage.addListener(
       pendingConsent = null;
       retryWithConsent(tabId, params, sessionId);
     } else if (message.type === 'CONSENT_DENY' && pendingConsent) {
-      console.log('[CAGE] User denied consent — staying on page');
+      console.log('[CAGE] User denied consent — returning to partner page');
+      const { tabId, partnerPageUrl } = pendingConsent;
       pendingConsent = null;
+      // Navigate back to the partner page (or just go back in history)
+      if (partnerPageUrl) {
+        chrome.tabs.update(tabId, { url: partnerPageUrl });
+      } else {
+        chrome.tabs.goBack(tabId);
+      }
     }
   }
 );
 
 async function attemptSilentAuth(
   tabId: number,
-  params: { clientId: string; redirectUri: string; responseType: string; state: string | null }
+  params: { clientId: string; redirectUri: string; responseType: string; state: string | null },
+  partnerPageUrl?: string
 ) {
   try {
     // 1. Get session from storage
@@ -138,11 +151,11 @@ async function attemptSilentAuth(
         partner_name?: string;
       };
 
-      // Handle consent_required — show overlay instead of falling through
+      // Handle consent_required — navigate back to partner page and show overlay
       if (err.error === 'consent_required') {
-        console.log('[CAGE] Consent required — showing overlay for', err.partner_name);
-        pendingConsent = { tabId, params, sessionId };
-        showConsentOverlay(tabId, err.partner_name ?? 'this site');
+        console.log('[CAGE] Consent required — showing consent page for', err.partner_name);
+        pendingConsent = { tabId, params, sessionId, partnerPageUrl };
+        showConsentPage(tabId, err.partner_name ?? 'this site');
         return;
       }
 
@@ -157,26 +170,11 @@ async function attemptSilentAuth(
   }
 }
 
-async function showConsentOverlay(tabId: number, partnerName: string) {
-  try {
-    // Set the partner name as a global variable before injecting the overlay script
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: (name: string) => {
-        (window as unknown as { __cagePartnerName: string }).__cagePartnerName = name;
-      },
-      args: [partnerName],
-    });
-
-    // Inject the consent overlay content script
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      files: ['consent-overlay.js'],
-    });
-  } catch (err) {
-    console.error('[CAGE] Failed to inject consent overlay:', err);
-    pendingConsent = null;
-  }
+function showConsentPage(tabId: number, partnerName: string) {
+  // Navigate the tab to the extension's consent page.
+  // The partner page's OAuth state cookie is preserved because we don't reload the partner page.
+  const consentUrl = chrome.runtime.getURL(`consent.html#partner=${encodeURIComponent(partnerName)}`);
+  chrome.tabs.update(tabId, { url: consentUrl });
 }
 
 async function retryWithConsent(
@@ -203,17 +201,12 @@ async function retryWithConsent(
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       console.error('[CAGE] Consent retry failed:', err);
-      // Remove the overlay
-      chrome.tabs.sendMessage(tabId, { type: 'CONSENT_OVERLAY_REMOVE' });
       return;
     }
 
-    // Remove overlay and redirect
-    chrome.tabs.sendMessage(tabId, { type: 'CONSENT_OVERLAY_REMOVE' });
     redirectToCallback(tabId, response);
   } catch (err) {
     console.error('[CAGE] Consent retry error:', err);
-    chrome.tabs.sendMessage(tabId, { type: 'CONSENT_OVERLAY_REMOVE' });
   }
 }
 

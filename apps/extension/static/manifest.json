@@ -10,10 +10,7 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://cageid-web.vercel.app/*",
-    "https://server-production-0ea14.up.railway.app/*",
-    "http://localhost:3000/*",
-    "http://localhost:3001/*"
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
