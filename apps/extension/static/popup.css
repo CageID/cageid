@@ -1,16 +1,17 @@
-/* ─── CAGE Extension Popup Styles ───────────────────────────── */
+/* ─── CAGE Extension Popup Styles (Dark Theme) ─────────────── */
 
 :root {
   --cage-dark: #282e00;
   --cage-mid: #999c7e;
   --cage-accent: #a0ff57;
-  --cage-bg: #fafaf7;
-  --cage-bg-dark: #1a1d00;
-  --cage-text: #1c1f00;
-  --cage-text-dark: #e8e8d8;
-  --cage-border: rgba(153, 156, 126, 0.2);
-  --cage-error: #dc2626;
-  --cage-amber: #d97706;
+  --cage-bg: #1a1d00;
+  --cage-surface: #222500;
+  --cage-surface-hover: #2a2d08;
+  --cage-text: #e8e8d8;
+  --cage-text-muted: #999c7e;
+  --cage-border: rgba(153, 156, 126, 0.15);
+  --cage-error: #f87171;
+  --cage-amber: #fbbf24;
 }
 
 * {
@@ -38,16 +39,17 @@ body {
 /* ─── Header ─────────────────────────────────────────────────── */
 
 .header {
-  background: var(--cage-dark);
+  background: #111300;
   padding: 16px 20px;
   text-align: center;
+  border-bottom: 1px solid var(--cage-border);
 }
 
 .logo {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--cage-text-dark);
+  color: var(--cage-text);
 }
 
 /* ─── State containers ───────────────────────────────────────── */
@@ -67,26 +69,26 @@ body {
 .tagline {
   font-size: 18px;
   font-weight: 600;
-  color: var(--cage-dark);
+  color: var(--cage-text);
   margin-bottom: 4px;
 }
 
 .subtitle {
   font-size: 13px;
-  color: var(--cage-mid);
+  color: var(--cage-text-muted);
   line-height: 1.4;
 }
 
 .mail-icon {
   font-size: 36px;
   margin-bottom: 8px;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 /* ─── Card ───────────────────────────────────────────────────── */
 
 .card {
-  background: white;
+  background: var(--cage-surface);
   border: 1px solid var(--cage-border);
   border-radius: 12px;
   padding: 16px;
@@ -98,7 +100,7 @@ body {
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: var(--cage-dark);
+  color: var(--cage-text);
   margin-bottom: 4px;
 }
 
@@ -109,18 +111,18 @@ body {
   border-radius: 8px;
   font-size: 14px;
   color: var(--cage-text);
-  background: white;
+  background: var(--cage-bg);
   outline: none;
   transition: border-color 0.15s;
 }
 
 .input::placeholder {
-  color: var(--cage-mid);
+  color: rgba(153, 156, 126, 0.5);
 }
 
 .input:focus {
-  border-color: var(--cage-dark);
-  box-shadow: 0 0 0 2px rgba(40, 46, 0, 0.1);
+  border-color: var(--cage-accent);
+  box-shadow: 0 0 0 2px rgba(160, 255, 87, 0.1);
 }
 
 .error {
@@ -135,23 +137,23 @@ body {
   width: 100%;
   padding: 10px 16px;
   margin-top: 12px;
-  background: var(--cage-dark);
-  color: var(--cage-accent);
+  background: var(--cage-accent);
+  color: var(--cage-dark);
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, opacity 0.15s;
 }
 
 .btn-primary:hover {
-  background: rgba(40, 46, 0, 0.9);
+  opacity: 0.9;
 }
 
 .btn-primary:disabled {
-  background: var(--cage-mid);
-  color: var(--cage-bg);
+  background: rgba(153, 156, 126, 0.3);
+  color: rgba(153, 156, 126, 0.6);
   cursor: not-allowed;
 }
 
@@ -159,21 +161,22 @@ body {
   width: 100%;
   padding: 10px 16px;
   background: transparent;
-  color: var(--cage-dark);
+  color: var(--cage-text-muted);
   border: 1px solid var(--cage-border);
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .btn-secondary:hover {
-  background: rgba(153, 156, 126, 0.08);
+  background: var(--cage-surface-hover);
+  color: var(--cage-text);
 }
 
 .btn-secondary:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -182,7 +185,7 @@ body {
   padding: 8px 16px;
   margin-top: 8px;
   background: transparent;
-  color: var(--cage-mid);
+  color: rgba(153, 156, 126, 0.6);
   border: none;
   font-size: 12px;
   cursor: pointer;
@@ -190,7 +193,7 @@ body {
 }
 
 .btn-text:hover {
-  color: var(--cage-dark);
+  color: var(--cage-text);
 }
 
 /* ─── Status section (logged in) ─────────────────────────────── */
@@ -205,7 +208,7 @@ body {
 .status-card,
 .info-card,
 .sites-card {
-  background: white;
+  background: var(--cage-surface);
   border: 1px solid var(--cage-border);
   border-radius: 12px;
   padding: 14px 16px;
@@ -221,12 +224,12 @@ body {
 .status-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--cage-dark);
+  color: var(--cage-text);
 }
 
 .status-msg {
   font-size: 13px;
-  color: var(--cage-mid);
+  color: var(--cage-text-muted);
   line-height: 1.4;
 }
 
@@ -251,15 +254,15 @@ body {
 }
 
 .badge-verified {
-  background: rgba(160, 255, 87, 0.15);
-  color: var(--cage-dark);
+  background: rgba(160, 255, 87, 0.12);
+  color: var(--cage-accent);
 }
 .badge-verified::before {
   background: var(--cage-accent);
 }
 
 .badge-pending {
-  background: rgba(217, 119, 6, 0.15);
+  background: rgba(251, 191, 36, 0.12);
   color: var(--cage-amber);
 }
 .badge-pending::before {
@@ -267,7 +270,7 @@ body {
 }
 
 .badge-declined {
-  background: rgba(220, 38, 38, 0.15);
+  background: rgba(248, 113, 113, 0.12);
   color: var(--cage-error);
 }
 .badge-declined::before {
@@ -275,11 +278,11 @@ body {
 }
 
 .badge-none {
-  background: rgba(153, 156, 126, 0.15);
-  color: var(--cage-mid);
+  background: rgba(153, 156, 126, 0.12);
+  color: var(--cage-text-muted);
 }
 .badge-none::before {
-  background: var(--cage-mid);
+  background: var(--cage-text-muted);
 }
 
 /* ─── Info rows ──────────────────────────────────────────────── */
@@ -292,12 +295,12 @@ body {
 
 .info-label {
   font-size: 13px;
-  color: var(--cage-mid);
+  color: var(--cage-text-muted);
 }
 
 .info-value {
   font-size: 13px;
-  color: var(--cage-dark);
+  color: var(--cage-text);
   font-weight: 500;
 }
 
@@ -306,13 +309,13 @@ body {
 .sites-title {
   font-size: 13px;
   font-weight: 500;
-  color: var(--cage-dark);
+  color: var(--cage-text);
   margin-bottom: 6px;
 }
 
 .sites-empty {
   font-size: 12px;
-  color: var(--cage-mid);
+  color: rgba(153, 156, 126, 0.6);
 }
 
 /* ─── Hint ───────────────────────────────────────────────────── */
@@ -320,7 +323,7 @@ body {
 .hint {
   text-align: center;
   font-size: 11px;
-  color: var(--cage-mid);
+  color: rgba(153, 156, 126, 0.6);
   margin-top: 12px;
 }
 
@@ -330,5 +333,5 @@ body {
   padding: 12px 20px;
   text-align: center;
   font-size: 11px;
-  color: var(--cage-mid);
+  color: rgba(153, 156, 126, 0.4);
 }
