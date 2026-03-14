@@ -4,9 +4,11 @@
  * Runs on CAGE web app pages. Detects the session handoff element
  * rendered by the extension-specific verify endpoint and passes
  * the session data to the background service worker.
+ *
+ * Note: Content scripts cannot use ES module imports.
  */
 
-function checkForSessionHandoff() {
+(function () {
   const el = document.getElementById('cage-ext-session');
   if (!el) return;
 
@@ -24,7 +26,4 @@ function checkForSessionHandoff() {
 
   // Remove the element from DOM after reading
   el.remove();
-}
-
-// Run on page load
-checkForSessionHandoff();
+})();

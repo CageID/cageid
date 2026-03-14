@@ -4,9 +4,15 @@
  * Handles:
  * - Session storage from content script handoff
  * - webNavigation listener for OAuth detection (Phase 2)
+ *
+ * Note: Config values inlined — keep in sync with config.ts.
  */
 
-import { STORAGE_KEYS } from './config.js';
+// TODO: Update to cageid.app / api.cageid.app when custom domains are configured.
+const STORAGE_KEYS = {
+  SESSION_ID: 'cage_session_id',
+  EMAIL: 'cage_email',
+} as const;
 
 // ─── Message Listener ──────────────────────────────────────────────────────────
 

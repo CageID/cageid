@@ -1,4 +1,18 @@
-import { SERVER_URL, STORAGE_KEYS } from './config.js';
+/**
+ * CAGE Extension — Popup Script
+ *
+ * Note: Popup scripts loaded via <script> cannot use ES module imports.
+ * Config values are inlined here.
+ */
+
+// ─── Config (inlined — keep in sync with config.ts) ───────────────────────────
+
+// TODO: Update to cageid.app / api.cageid.app when custom domains are configured.
+const SERVER_URL = 'https://server-production-0ea14.up.railway.app';
+const STORAGE_KEYS = {
+  SESSION_ID: 'cage_session_id',
+  EMAIL: 'cage_email',
+} as const;
 
 // ─── DOM Elements ──────────────────────────────────────────────────────────────
 
