@@ -45,11 +45,9 @@ body {
   border-bottom: 1px solid var(--cage-border);
 }
 
-.logo {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--cage-text);
+.logo-svg {
+  height: 32px;
+  width: auto;
 }
 
 /* ─── State containers ───────────────────────────────────────── */
