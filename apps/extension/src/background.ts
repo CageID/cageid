@@ -81,6 +81,28 @@ chrome.webNavigation.onBeforeNavigate.addListener(
   }
 );
 
+// Pending consent state — tracks which tab/params are awaiting user consent
+let pendingConsent: {
+  tabId: number;
+  params: { clientId: string; redirectUri: string; responseType: string; state: string | null };
+  sessionId: string;
+} | null = null;
+
+// Listen for consent overlay responses
+chrome.runtime.onMessage.addListener(
+  (message: { type: string }, _sender, _sendResponse) => {
+    if (message.type === 'CONSENT_ALLOW' && pendingConsent) {
+      console.log('[CAGE] User granted consent — retrying with grant_consent');
+      const { tabId, params, sessionId } = pendingConsent;
+      pendingConsent = null;
+      retryWithConsent(tabId, params, sessionId);
+    } else if (message.type === 'CONSENT_DENY' && pendingConsent) {
+      console.log('[CAGE] User denied consent — staying on page');
+      pendingConsent = null;
+    }
+  }
+);
+
 async function attemptSilentAuth(
   tabId: number,
   params: { clientId: string; redirectUri: string; responseType: string; state: string | null }
@@ -111,28 +133,103 @@ async function attemptSilentAuth(
     });
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      console.log('[CAGE] Silent auth declined:', (err as { error?: string }).error ?? response.status, '— falling through');
+      const err = await response.json().catch(() => ({})) as {
+        error?: string;
+        partner_name?: string;
+      };
+
+      // Handle consent_required — show overlay instead of falling through
+      if (err.error === 'consent_required') {
+        console.log('[CAGE] Consent required — showing overlay for', err.partner_name);
+        pendingConsent = { tabId, params, sessionId };
+        showConsentOverlay(tabId, err.partner_name ?? 'this site');
+        return;
+      }
+
+      console.log('[CAGE] Silent auth declined:', err.error ?? response.status, '— falling through');
       return;
     }
 
-    const { code, redirect_uri, state } = await response.json() as {
-      code: string;
-      redirect_uri: string;
-      state: string | null;
-    };
-
-    // 3. Build the callback URL and redirect the tab
-    const callbackUrl = new URL(redirect_uri);
-    callbackUrl.searchParams.set('code', code);
-    if (state) callbackUrl.searchParams.set('state', state);
-
-    console.log('[CAGE] Silent auth success — redirecting to partner callback');
-    chrome.tabs.update(tabId, { url: callbackUrl.toString() });
+    redirectToCallback(tabId, response);
   } catch (err) {
     console.error('[CAGE] Silent auth error:', err);
     // Let normal flow proceed on any error
   }
+}
+
+async function showConsentOverlay(tabId: number, partnerName: string) {
+  try {
+    // Set the partner name as a global variable before injecting the overlay script
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: (name: string) => {
+        (window as unknown as { __cagePartnerName: string }).__cagePartnerName = name;
+      },
+      args: [partnerName],
+    });
+
+    // Inject the consent overlay content script
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['consent-overlay.js'],
+    });
+  } catch (err) {
+    console.error('[CAGE] Failed to inject consent overlay:', err);
+    pendingConsent = null;
+  }
+}
+
+async function retryWithConsent(
+  tabId: number,
+  params: { clientId: string; redirectUri: string; responseType: string; state: string | null },
+  sessionId: string
+) {
+  try {
+    const response = await fetch(`${SERVER_URL}/oauth/extension-authorize`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify({
+        client_id: params.clientId,
+        redirect_uri: params.redirectUri,
+        response_type: params.responseType,
+        state: params.state ?? undefined,
+        grant_consent: true,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      console.error('[CAGE] Consent retry failed:', err);
+      // Remove the overlay
+      chrome.tabs.sendMessage(tabId, { type: 'CONSENT_OVERLAY_REMOVE' });
+      return;
+    }
+
+    // Remove overlay and redirect
+    chrome.tabs.sendMessage(tabId, { type: 'CONSENT_OVERLAY_REMOVE' });
+    redirectToCallback(tabId, response);
+  } catch (err) {
+    console.error('[CAGE] Consent retry error:', err);
+    chrome.tabs.sendMessage(tabId, { type: 'CONSENT_OVERLAY_REMOVE' });
+  }
+}
+
+async function redirectToCallback(tabId: number, response: Response) {
+  const { code, redirect_uri, state } = await response.json() as {
+    code: string;
+    redirect_uri: string;
+    state: string | null;
+  };
+
+  const callbackUrl = new URL(redirect_uri);
+  callbackUrl.searchParams.set('code', code);
+  if (state) callbackUrl.searchParams.set('state', state);
+
+  console.log('[CAGE] Silent auth success — redirecting to partner callback');
+  chrome.tabs.update(tabId, { url: callbackUrl.toString() });
 }
 
 // ─── Extension Lifecycle ───────────────────────────────────────────────────────

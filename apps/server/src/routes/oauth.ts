@@ -159,11 +159,12 @@ oauthRoutes.get("/authorize", async (c) => {
 
 oauthRoutes.post("/extension-authorize", requireAuth, async (c) => {
   const userId = c.get("userId");
-  const { client_id, redirect_uri, response_type, state } = await c.req.json<{
+  const { client_id, redirect_uri, response_type, state, grant_consent } = await c.req.json<{
     client_id: string;
     redirect_uri: string;
     response_type: string;
     state?: string;
+    grant_consent?: boolean;
   }>();
 
   // 1. Basic param validation
@@ -211,7 +212,20 @@ oauthRoutes.post("/extension-authorize", requireAuth, async (c) => {
   });
 
   if (!existingSub) {
-    return c.json({ error: "consent_required", error_description: "User has not consented to this partner" }, 403);
+    if (!grant_consent) {
+      return c.json({
+        error: "consent_required",
+        error_description: "User has not consented to this partner",
+        partner_name: partner.name,
+      }, 403);
+    }
+
+    // grant_consent: true — create partner_subs row
+    await db.insert(partnerSubs).values({
+      userId,
+      partnerId: partner.id,
+      subHash: randomUUID(),
+    });
   }
 
   // 6. Issue auth code
