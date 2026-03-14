@@ -310,28 +310,41 @@ oauthRoutes.post("/token", async (c) => {
   await redis.del(`oauth_code:${code}`);
 
   // 7. Load the user's current verification (must still be valid at exchange time)
-  const verification = await db.query.verifications.findFirst({
-    where: (v, { eq, and, gt }) =>
-      and(
-        eq(v.userId, stored.userId),
-        eq(v.status, "approved"),
-        gt(v.expiresAt!, new Date())
-      ),
-    orderBy: (v, { desc }) => [desc(v.createdAt)],
-  });
+  let verification;
+  let partnerSub;
+  try {
+    verification = await db.query.verifications.findFirst({
+      where: (v, { eq, and, gt, isNotNull }) =>
+        and(
+          eq(v.userId, stored.userId),
+          eq(v.status, "approved"),
+          isNotNull(v.expiresAt),
+          gt(v.expiresAt!, new Date())
+        ),
+      orderBy: (v, { desc }) => [desc(v.createdAt)],
+    });
+  } catch (err) {
+    console.error("Token endpoint: verification lookup failed", err);
+    return c.json({ error: "server_error", error_description: "Verification lookup failed" }, 500);
+  }
 
   if (!verification) {
-    return c.json({ error: "invalid_grant" }, 400);
+    return c.json({ error: "invalid_grant", error_description: "No valid verification found" }, 400);
   }
 
   // 8. Get the partner-scoped sub_hash
-  const partnerSub = await db.query.partnerSubs.findFirst({
-    where: (ps, { eq, and }) =>
-      and(eq(ps.userId, stored.userId), eq(ps.partnerId, stored.partnerId)),
-  });
+  try {
+    partnerSub = await db.query.partnerSubs.findFirst({
+      where: (ps, { eq, and }) =>
+        and(eq(ps.userId, stored.userId), eq(ps.partnerId, stored.partnerId)),
+    });
+  } catch (err) {
+    console.error("Token endpoint: partnerSub lookup failed", err);
+    return c.json({ error: "server_error", error_description: "Partner sub lookup failed" }, 500);
+  }
 
   if (!partnerSub) {
-    return c.json({ error: "invalid_grant" }, 400);
+    return c.json({ error: "invalid_grant", error_description: "No partner consent found" }, 400);
   }
 
   // 9. Sign and return the ID token
