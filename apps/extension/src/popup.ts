@@ -71,6 +71,12 @@ function updateStatusBadge(status: string) {
       statusMessage.textContent =
         'Your previous verification was unsuccessful. Visit cageid.app to try again.';
       break;
+    case 'unreachable':
+      statusBadge.classList.add('badge-error');
+      statusBadge.textContent = 'Offline';
+      statusMessage.textContent =
+        'Could not reach the CAGE server. Check your connection and try again.';
+      break;
     default:
       statusBadge.classList.add('badge-none');
       statusBadge.textContent = 'Not verified';
@@ -102,17 +108,28 @@ async function sendMagicLink(email: string): Promise<{ ok: boolean; error?: stri
   }
 }
 
-async function fetchVerificationStatus(
-  sessionId: string
-): Promise<{ status: string } | null> {
+type VerifyResult =
+  | { ok: true; status: string }
+  | { ok: false; reason: 'expired' | 'unreachable' };
+
+async function fetchVerificationStatus(sessionId: string): Promise<VerifyResult> {
   try {
     const res = await fetch(`${SERVER_URL}/verify/status`, {
       headers: { Authorization: `Bearer ${sessionId}` },
     });
-    if (!res.ok) return null;
-    return (await res.json()) as { status: string };
+
+    if (res.status === 401) {
+      return { ok: false, reason: 'expired' };
+    }
+
+    if (!res.ok) {
+      return { ok: false, reason: 'unreachable' };
+    }
+
+    const data = (await res.json()) as { status: string };
+    return { ok: true, status: data.status };
   } catch {
-    return null;
+    return { ok: false, reason: 'unreachable' };
   }
 }
 
@@ -185,6 +202,7 @@ backBtn.addEventListener('click', () => {
 
 logoutBtn.addEventListener('click', async () => {
   await chrome.storage.local.remove([STORAGE_KEYS.SESSION_ID, STORAGE_KEYS.EMAIL]);
+  loginError.style.display = 'none';
   showState('logged-out');
   emailInput.value = '';
 });
@@ -202,13 +220,19 @@ async function init() {
     showState('logged-in');
 
     // Fetch verification status
-    const status = await fetchVerificationStatus(sessionId);
-    if (status) {
-      updateStatusBadge(status.status);
-    } else {
-      // Session might be expired — clear and show login
+    const result = await fetchVerificationStatus(sessionId);
+
+    if (result.ok) {
+      updateStatusBadge(result.status);
+    } else if (result.reason === 'expired') {
+      // Session expired — clear and show login with message
       await chrome.storage.local.remove([STORAGE_KEYS.SESSION_ID, STORAGE_KEYS.EMAIL]);
       showState('logged-out');
+      loginError.textContent = 'Session expired. Please sign in again.';
+      loginError.style.display = 'block';
+    } else {
+      // API unreachable — show logged-in state with error banner
+      updateStatusBadge('unreachable');
     }
   } else {
     showState('logged-out');

@@ -283,6 +283,14 @@ body {
   background: var(--cage-text-muted);
 }
 
+.badge-error {
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--cage-error);
+}
+.badge-error::before {
+  background: var(--cage-error);
+}
+
 /* ─── Info rows ──────────────────────────────────────────────── */
 
 .info-row {

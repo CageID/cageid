@@ -223,14 +223,79 @@ async function redirectToCallback(tabId: number, response: Response) {
   chrome.tabs.update(tabId, { url: callbackUrl.toString() });
 }
 
+// ─── Icon Badge Management ────────────────────────────────────────────────────
+
+type IconState = 'locked' | 'unlocked';
+
+function setIconState(state: IconState) {
+  const suffix = state === 'unlocked' ? 'unlocked' : 'locked';
+  chrome.action.setIcon({
+    path: {
+      '16': `icons/${suffix}-16.png`,
+      '32': `icons/${suffix}-32.png`,
+      '128': `icons/${suffix}-128.png`,
+    },
+  });
+  // Set tooltip
+  chrome.action.setTitle({
+    title: state === 'unlocked' ? 'CAGE — Age Verified ✓' : 'CAGE — Not signed in',
+  });
+}
+
+async function updateIconFromStorage() {
+  const stored = await chrome.storage.local.get([STORAGE_KEYS.SESSION_ID]);
+  const sessionId = stored[STORAGE_KEYS.SESSION_ID];
+
+  if (!sessionId) {
+    setIconState('locked');
+    return;
+  }
+
+  // Check verification status to decide icon
+  try {
+    const res = await fetch(`${SERVER_URL}/verify/status`, {
+      headers: { Authorization: `Bearer ${sessionId}` },
+    });
+
+    if (res.status === 401) {
+      // Session expired — clear storage and show locked
+      await chrome.storage.local.remove([STORAGE_KEYS.SESSION_ID, STORAGE_KEYS.EMAIL]);
+      setIconState('locked');
+      return;
+    }
+
+    if (res.ok) {
+      const data = (await res.json()) as { status: string };
+      setIconState(data.status === 'approved' ? 'unlocked' : 'locked');
+    } else {
+      setIconState('locked');
+    }
+  } catch {
+    // API unreachable — keep current state, don't clear session
+    console.log('[CAGE] Could not reach server for icon update');
+  }
+}
+
+// Update icon when storage changes (login/logout)
+chrome.storage.onChanged.addListener((changes) => {
+  if (changes[STORAGE_KEYS.SESSION_ID]) {
+    updateIconFromStorage();
+  }
+});
+
 // ─── Extension Lifecycle ───────────────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     console.log('[CAGE] Extension installed');
+    setIconState('locked');
   } else if (details.reason === 'update') {
     console.log('[CAGE] Extension updated to', chrome.runtime.getManifest().version);
   }
+  updateIconFromStorage();
 });
+
+// On service worker startup, update icon
+updateIconFromStorage();
 
 console.log('[CAGE] Background service worker started');
