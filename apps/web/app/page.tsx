@@ -42,7 +42,7 @@ export default async function LandingPage() {
   const isLoggedIn = auth.authenticated;
 
   return (
-    <div className="bg-cage-bg-dark text-cage-text-dark min-h-screen">
+    <div className="bg-cage-bg-dark text-cage-text-dark min-h-screen" style={{ letterSpacing: "-0.5px" }}>
       {/* ─── Nav ──────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-cage-bg-dark/80 border-b border-cage-accent/10">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -53,32 +53,37 @@ export default async function LandingPage() {
             <a
               href="#how-it-works"
               className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
             >
               How it works
             </a>
             <a
               href="#for-partners"
               className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
             >
               Partners
             </a>
             <a
               href="#trust"
               className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
             >
               Trust
             </a>
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                className="text-sm font-medium text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
+                className="text-sm text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
               >
                 Dashboard
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-medium text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
+                className="text-sm text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
               >
                 Sign in
               </Link>
@@ -96,6 +101,7 @@ export default async function LandingPage() {
             fontFamily: "var(--font-geist-mono), monospace",
             fontSize: "clamp(6px, 1.1vw, 14px)",
             opacity: 0.07,
+            letterSpacing: "0px",
           }}
           aria-hidden="true"
         >
@@ -111,17 +117,17 @@ export default async function LandingPage() {
           }}
         />
 
-        <div className="relative z-10 text-center max-w-3xl mx-auto px-6">
+        <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
           <h1
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6"
-            style={{ fontFamily: "var(--font-geist-sans)" }}
+            style={{ fontFamily: "var(--font-geist-sans)", letterSpacing: "-2px" }}
           >
             Stop uploading your ID
             <br />
             <span className="text-cage-accent">to every website.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-cage-mid max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg sm:text-xl text-cage-mid max-w-xl mx-auto mb-10 leading-relaxed" style={{ letterSpacing: "-0.5px" }}>
             Verify your age once. Use it everywhere.
           </p>
 
@@ -129,21 +135,31 @@ export default async function LandingPage() {
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_30px_rgba(160,255,87,0.2)]"
+                className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_30px_rgba(160,255,87,0.2)]"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
               >
                 Dashboard
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_30px_rgba(160,255,87,0.2)]"
+                className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_30px_rgba(160,255,87,0.2)]"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
               >
                 Get Verified
               </Link>
             )}
             <a
+              href="#"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
+            >
+              Install Extension
+            </a>
+            <a
               href="#for-partners"
-              className="inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
             >
               For Partners
             </a>
@@ -169,23 +185,33 @@ export default async function LandingPage() {
       {/* ─── Section 2: How It Works ──────────────────────────── */}
       <section id="how-it-works" className="py-24 sm:py-32 px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-cage-accent mb-4 text-center">
+          <h2
+            className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4 text-center"
+            style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
+          >
             How it works
           </h2>
-          <p className="text-3xl sm:text-4xl font-bold text-center mb-16 max-w-2xl mx-auto">
+          <p className="text-3xl sm:text-4xl font-bold text-center mb-16 max-w-2xl mx-auto" style={{ letterSpacing: "-1px" }}>
             Three steps. Sixty seconds. Never again.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 md:gap-4 relative">
-            {/* Connecting line (desktop only) */}
-            <div className="hidden md:block absolute top-12 left-[calc(16.67%+24px)] right-[calc(16.67%+24px)] h-px bg-gradient-to-r from-cage-accent/30 via-cage-accent/50 to-cage-accent/30" />
+            {/* Connecting line (desktop only) — spans between step circle centers */}
+            <div
+              className="hidden md:block absolute h-px bg-gradient-to-r from-cage-accent/30 via-cage-accent/50 to-cage-accent/30"
+              style={{
+                top: "24px",
+                left: "calc(100% / 6)",
+                right: "calc(100% / 6)",
+              }}
+            />
 
             {/* Step 1 */}
             <div className="relative text-center group">
-              <div className="w-12 h-12 rounded-full bg-cage-accent/10 border border-cage-accent/30 flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold group-hover:bg-cage-accent/20 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-cage-accent/10 border border-cage-accent/30 flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold group-hover:bg-cage-accent/20 transition-colors relative z-10">
                 1
               </div>
-              <h3 className="text-lg font-semibold mb-2">Verify once</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}>Verify once</h3>
               <p className="text-sm text-cage-mid leading-relaxed">
                 Scan your government ID through our secure partner Veriff. Takes
                 60 seconds.
@@ -194,10 +220,10 @@ export default async function LandingPage() {
 
             {/* Step 2 */}
             <div className="relative text-center group">
-              <div className="w-12 h-12 rounded-full bg-cage-accent/10 border border-cage-accent/30 flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold group-hover:bg-cage-accent/20 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-cage-accent/10 border border-cage-accent/30 flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold group-hover:bg-cage-accent/20 transition-colors relative z-10">
                 2
               </div>
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}>
                 CAGE forgets your ID
               </h3>
               <p className="text-sm text-cage-mid leading-relaxed">
@@ -208,10 +234,10 @@ export default async function LandingPage() {
 
             {/* Step 3 */}
             <div className="relative text-center group">
-              <div className="w-12 h-12 rounded-full bg-cage-accent/10 border border-cage-accent/30 flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold group-hover:bg-cage-accent/20 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-cage-accent/10 border border-cage-accent/30 flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold group-hover:bg-cage-accent/20 transition-colors relative z-10">
                 3
               </div>
-              <h3 className="text-lg font-semibold mb-2">Use it everywhere</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}>Use it everywhere</h3>
               <p className="text-sm text-cage-mid leading-relaxed">
                 Sites check your age instantly and anonymously. You never
                 re-verify.
@@ -226,18 +252,21 @@ export default async function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-cage-accent mb-4">
+              <h2
+                className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
+              >
                 For users
               </h2>
-              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
+              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px" }}>
                 Your ID is none of
                 <br />
                 their business.
               </p>
               <div className="space-y-4 text-cage-mid leading-relaxed">
                 <p>
-                  One verification works across every partner site. The browser
-                  extension makes it silent after the first time.
+                  One verification works across every partner site. Install the
+                  browser extension and never see a verification screen again.
                 </p>
                 <p>
                   No personal data is ever shared with any site — they only
@@ -258,11 +287,11 @@ export default async function LandingPage() {
                   <div className="w-2.5 h-2.5 rounded-full bg-cage-error/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-cage-amber/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-cage-accent/60" />
-                  <span className="ml-2 text-xs text-cage-mid/60 font-mono">
+                  <span className="ml-2 text-xs text-cage-mid/60 font-mono" style={{ letterSpacing: "0px" }}>
                     decoded_token.json
                   </span>
                 </div>
-                <pre className="p-6 text-sm leading-relaxed font-mono overflow-x-auto">
+                <pre className="p-6 text-sm leading-relaxed font-mono overflow-x-auto" style={{ letterSpacing: "0px" }}>
                   <code>
                     <span className="text-cage-mid/50">{"{"}</span>
                     {"\n"}
@@ -295,7 +324,7 @@ export default async function LandingPage() {
                   </code>
                 </pre>
                 <div className="px-6 pb-4">
-                  <p className="text-xs text-cage-mid/40 font-mono">
+                  <p className="text-xs text-cage-mid/40 font-mono" style={{ letterSpacing: "0px" }}>
                     ↑ That&apos;s it. That&apos;s all they get.
                   </p>
                 </div>
@@ -320,11 +349,11 @@ export default async function LandingPage() {
                   <div className="w-2.5 h-2.5 rounded-full bg-cage-error/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-cage-amber/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-cage-accent/60" />
-                  <span className="ml-2 text-xs text-cage-mid/60 font-mono">
+                  <span className="ml-2 text-xs text-cage-mid/60 font-mono" style={{ letterSpacing: "0px" }}>
                     integration.js
                   </span>
                 </div>
-                <pre className="p-6 text-sm leading-relaxed font-mono overflow-x-auto">
+                <pre className="p-6 text-sm leading-relaxed font-mono overflow-x-auto" style={{ letterSpacing: "0px" }}>
                   <code>
                     <span className="text-cage-mid/50">
                       {"// Add age-gating in 3 lines"}
@@ -364,10 +393,13 @@ export default async function LandingPage() {
             </div>
 
             <div className="order-1 lg:order-2">
-              <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-cage-accent mb-4">
+              <h2
+                className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
+              >
                 For partners
               </h2>
-              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
+              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px" }}>
                 Add age verification in minutes, not months.
               </p>
               <div className="space-y-4 text-cage-mid leading-relaxed mb-8">
@@ -384,13 +416,15 @@ export default async function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all"
+                  className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all"
+                  style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
                 >
                   Read the Docs
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
+                  className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
+                  style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
                 >
                   Get API Access
                 </a>
@@ -406,10 +440,13 @@ export default async function LandingPage() {
         className="py-24 sm:py-32 px-6 border-t border-cage-accent/5"
       >
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-cage-accent mb-4 text-center">
+          <h2
+            className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4 text-center"
+            style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
+          >
             Trust
           </h2>
-          <p className="text-3xl sm:text-4xl font-bold text-center mb-4 max-w-2xl mx-auto">
+          <p className="text-3xl sm:text-4xl font-bold text-center mb-4 max-w-2xl mx-auto" style={{ letterSpacing: "-1px" }}>
             Making the internet safer for young people.
           </p>
           <p className="text-cage-mid text-center max-w-2xl mx-auto mb-16 leading-relaxed">
@@ -432,7 +469,7 @@ export default async function LandingPage() {
                 >
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
-                <h3 className="font-semibold text-cage-accent">CAGE stores</h3>
+                <h3 className="font-semibold text-cage-accent" style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}>CAGE stores</h3>
               </div>
               <ul className="space-y-3">
                 {[
@@ -473,7 +510,7 @@ export default async function LandingPage() {
                 >
                   <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
-                <h3 className="font-semibold text-amber-400">
+                <h3 className="font-semibold text-amber-400" style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}>
                   Processed, then deleted
                 </h3>
               </div>
@@ -520,7 +557,7 @@ export default async function LandingPage() {
                   <line x1="15" y1="9" x2="9" y2="15" />
                   <line x1="9" y1="9" x2="15" y2="15" />
                 </svg>
-                <h3 className="font-semibold text-red-400">Never collected</h3>
+                <h3 className="font-semibold text-red-400" style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}>Never collected</h3>
               </div>
               <ul className="space-y-3">
                 {[
@@ -555,20 +592,22 @@ export default async function LandingPage() {
       {/* ─── Section 6: Footer CTA ────────────────────────────── */}
       <section className="py-24 sm:py-32 px-6 border-t border-cage-accent/5">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-3xl sm:text-4xl font-bold mb-8">
+          <p className="text-3xl sm:text-4xl font-bold mb-8" style={{ letterSpacing: "-1px" }}>
             Ready to verify once?
           </p>
           {isLoggedIn ? (
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center px-10 py-4 text-base font-semibold text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_40px_rgba(160,255,87,0.15)]"
+              className="inline-flex items-center justify-center px-10 py-4 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_40px_rgba(160,255,87,0.15)]"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
             >
               Go to Dashboard
             </Link>
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center justify-center px-10 py-4 text-base font-semibold text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_40px_rgba(160,255,87,0.15)]"
+              className="inline-flex items-center justify-center px-10 py-4 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_40px_rgba(160,255,87,0.15)]"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 750 }}
             >
               Get Started
             </Link>
