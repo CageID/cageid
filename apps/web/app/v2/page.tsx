@@ -350,6 +350,120 @@ export default async function LandingPageV2() {
           </div>
         </div>
       </section>
+
+      {/* ─── Section 5: Trust ─────────────────────────────────────── */}
+      <section id="trust" className="py-24 sm:py-32 px-6 border-t border-cage-accent/5">
+        <div className="max-w-5xl mx-auto">
+          <h2
+            className="text-sm uppercase text-cage-accent mb-4 text-center"
+            style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
+          >
+            TRUST
+          </h2>
+          <p className="text-3xl sm:text-4xl font-bold text-center mb-4 max-w-2xl mx-auto" style={{ letterSpacing: "-1px" }}>
+            Making the internet safer for young people.
+          </p>
+          <p className="text-cage-mid text-center max-w-2xl mx-auto mb-16 leading-relaxed">
+            Age verification should be universal and private — not a choice between safety and surveillance. CAGE proves you can have both.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Column 1: CAGE stores */}
+            <div
+              className="rounded-xl p-6"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderLeft: "4px solid #a0ff57",
+                boxShadow: "-4px 0 20px rgba(160,255,87,0.1)",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-cage-accent">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+                <h3 className="font-semibold text-cage-accent">CAGE stores</h3>
+              </div>
+              <ul className="space-y-3">
+                {["Anonymous ID", "Age bracket (18+ / 21+)", "Verification timestamp", "Per-site anonymous tokens"].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-cage-accent mt-0.5 shrink-0">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span className="text-cage-text-dark/80">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Column 2: Processed then deleted */}
+            <div
+              className="rounded-xl p-6"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderLeft: "4px solid #d97706",
+                boxShadow: "-4px 0 20px rgba(217,119,6,0.1)",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-amber-400">
+                  <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                <h3 className="font-semibold text-amber-400">Processed, then deleted</h3>
+              </div>
+              <ul className="space-y-3">
+                {["ID document images", "Selfie video", "Personal details"].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-amber-400 mt-0.5 shrink-0">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span className="text-cage-text-dark/80">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-xs text-cage-mid/60 leading-relaxed">Handled by Veriff. Never touches CAGE servers.</p>
+            </div>
+
+            {/* Column 3: Never collected */}
+            <div
+              className="rounded-xl p-6"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderLeft: "4px solid #dc2626",
+                boxShadow: "-4px 0 20px rgba(220,38,38,0.1)",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-red-400">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+                <h3 className="font-semibold text-red-400">Never collected</h3>
+              </div>
+              <ul className="space-y-3">
+                {["Your name", "Birthday", "Address", "Face data", "Browsing history"].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-red-400 mt-0.5 shrink-0">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    <span className="text-cage-text-dark/80">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
