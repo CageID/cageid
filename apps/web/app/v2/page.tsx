@@ -66,13 +66,13 @@ export default async function LandingPageV2() {
           }}
         />
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
+        <div className="relative z-10 text-center max-w-6xl mx-auto px-6">
           <h1
             className="leading-[1.05] mb-8"
             style={{
               fontFamily: "var(--font-geist-sans)",
               letterSpacing: "-0.04em",
-              fontSize: "clamp(3.5rem, 9vw, 8rem)",
+              fontSize: "clamp(2.2rem, 5vw, 4.5rem)",
               fontWeight: 800,
             }}
           >
@@ -145,7 +145,7 @@ export default async function LandingPageV2() {
           >
             HOW IT WORKS
           </h2>
-          <p className="text-3xl sm:text-4xl font-bold text-center mb-16 max-w-2xl mx-auto" style={{ letterSpacing: "-1px" }}>
+          <p className="text-3xl sm:text-4xl font-bold text-center mb-16 max-w-2xl mx-auto" style={{ letterSpacing: "-1px", textWrap: "balance" }}>
             Three steps. Sixty seconds. Never again.
           </p>
 
@@ -207,10 +207,8 @@ export default async function LandingPageV2() {
               >
                 FOR USERS
               </h2>
-              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px" }}>
-                Your ID is none of
-                <br />
-                their business.
+              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px", textWrap: "balance" }}>
+                Your ID is none of their business.
               </p>
               <div className="space-y-4 text-cage-mid leading-relaxed">
                 <p>One verification works across every partner site. Install the browser extension and never see a verification screen again.</p>
@@ -318,7 +316,7 @@ export default async function LandingPageV2() {
               >
                 FOR PARTNERS
               </h2>
-              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px" }}>
+              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px", textWrap: "balance" }}>
                 Add age verification in minutes, not months.
               </p>
               <div className="space-y-4 text-cage-mid leading-relaxed mb-8">
@@ -360,7 +358,7 @@ export default async function LandingPageV2() {
           >
             TRUST
           </h2>
-          <p className="text-3xl sm:text-4xl font-bold text-center mb-4 max-w-2xl mx-auto" style={{ letterSpacing: "-1px" }}>
+          <p className="text-3xl sm:text-4xl font-bold text-center mb-4 max-w-2xl mx-auto" style={{ letterSpacing: "-1px", textWrap: "balance" }}>
             Making the internet safer for young people.
           </p>
           <p className="text-cage-mid text-center max-w-2xl mx-auto mb-16 leading-relaxed">
@@ -473,7 +471,7 @@ export default async function LandingPageV2() {
         }}
       >
         <div className="max-w-2xl mx-auto text-center relative z-10">
-          <p className="text-3xl sm:text-4xl font-bold mb-8" style={{ letterSpacing: "-1px" }}>
+          <p className="text-3xl sm:text-4xl font-bold mb-8" style={{ letterSpacing: "-1px", textWrap: "balance" }}>
             Ready to verify once?
           </p>
           {isLoggedIn ? (
