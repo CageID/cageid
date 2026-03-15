@@ -59,6 +59,7 @@ export default async function LandingPageV2() {
 
         {/* Radial glow */}
         <div
+          aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
           style={{
             background: "radial-gradient(ellipse 60% 40% at 50% 50%, rgba(160,255,87,0.07) 0%, transparent 70%)",
@@ -67,7 +68,7 @@ export default async function LandingPageV2() {
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
           <h1
-            className="font-bold leading-[1.05] mb-8"
+            className="leading-[1.05] mb-8"
             style={{
               fontFamily: "var(--font-geist-sans)",
               letterSpacing: "-0.04em",
@@ -128,7 +129,7 @@ export default async function LandingPageV2() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div aria-hidden="true" className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cage-mid/40">
             <path d="M12 5v14M19 12l-7 7-7-7" />
           </svg>
