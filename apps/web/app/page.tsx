@@ -329,8 +329,8 @@ export default async function LandingPage() {
                 <p>Works with any platform, any language, any framework.</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="#"
+                <Link
+                  href="/docs"
                   className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-dark rounded-xl hover:brightness-110 transition-all"
                   style={{
                     fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em",
@@ -339,9 +339,9 @@ export default async function LandingPage() {
                   }}
                 >
                   READ THE DOCS
-                </a>
+                </Link>
                 <a
-                  href="#"
+                  href="mailto:partners@cageid.app"
                   className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
                   style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
                 >
@@ -519,9 +519,10 @@ export default async function LandingPage() {
             <span className="text-xs text-cage-mid/50">Confirmed Age, Granted Entry</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-cage-mid/50">
-            <a href="#" className="hover:text-cage-text-dark transition-colors">About</a>
-            <a href="#" className="hover:text-cage-text-dark transition-colors">Privacy</a>
-            <a href="#" className="hover:text-cage-text-dark transition-colors">Docs</a>
+            <Link href="/about" className="hover:text-cage-text-dark transition-colors">About</Link>
+            <Link href="/privacy" className="hover:text-cage-text-dark transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-cage-text-dark transition-colors">Terms</Link>
+            <Link href="/docs" className="hover:text-cage-text-dark transition-colors">Docs</Link>
             <a href="https://github.com/CageID/cageid" className="hover:text-cage-text-dark transition-colors">GitHub</a>
           </div>
         </div>

@@ -452,21 +452,11 @@ export default function PricingPage() {
             </span>
           </div>
           <div className="flex items-center gap-6 text-xs text-cage-mid/50">
-            <a href="#" className="hover:text-cage-text-dark transition-colors">
-              About
-            </a>
-            <a href="#" className="hover:text-cage-text-dark transition-colors">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-cage-text-dark transition-colors">
-              Docs
-            </a>
-            <a
-              href="https://github.com/CageID/cageid"
-              className="hover:text-cage-text-dark transition-colors"
-            >
-              GitHub
-            </a>
+            <Link href="/about" className="hover:text-cage-text-dark transition-colors">About</Link>
+            <Link href="/privacy" className="hover:text-cage-text-dark transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-cage-text-dark transition-colors">Terms</Link>
+            <Link href="/docs" className="hover:text-cage-text-dark transition-colors">Docs</Link>
+            <a href="https://github.com/CageID/cageid" className="hover:text-cage-text-dark transition-colors">GitHub</a>
           </div>
         </div>
       </footer>
