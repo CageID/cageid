@@ -254,6 +254,7 @@ export default function PricingPage() {
                         ...NAV_LINK,
                         background: "linear-gradient(135deg, #a0ff57, #6dff00)",
                         fontSize: "0.7em",
+                        whiteSpace: "nowrap",
                       }}
                     >
                       MOST POPULAR

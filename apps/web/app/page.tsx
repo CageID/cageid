@@ -24,14 +24,14 @@ export default async function LandingPage() {
               style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
               PARTNERS
             </a>
-            <Link href="/pricing" className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
-              PRICING
-            </Link>
             <a href="#trust" className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
               style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
               TRUST
             </a>
+            <Link href="/pricing" className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
+              PRICING
+            </Link>
             {isLoggedIn ? (
               <Link href="/dashboard" className="text-sm text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
                 style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
@@ -385,9 +385,8 @@ export default async function LandingPage() {
                 background: "rgba(255,255,255,0.04)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderLeft: "4px solid #a0ff57",
-                boxShadow: "-4px 0 20px rgba(160,255,87,0.1)",
+                border: "1px solid rgba(160,255,87,0.3)",
+                boxShadow: "0 0 24px rgba(160,255,87,0.08)",
               }}
             >
               <div className="flex items-center gap-2 mb-4">
@@ -415,9 +414,8 @@ export default async function LandingPage() {
                 background: "rgba(255,255,255,0.04)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderLeft: "4px solid #d97706",
-                boxShadow: "-4px 0 20px rgba(217,119,6,0.1)",
+                border: "1px solid rgba(217,119,6,0.3)",
+                boxShadow: "0 0 24px rgba(217,119,6,0.08)",
               }}
             >
               <div className="flex items-center gap-2 mb-4">
@@ -446,9 +444,8 @@ export default async function LandingPage() {
                 background: "rgba(255,255,255,0.04)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderLeft: "4px solid #dc2626",
-                boxShadow: "-4px 0 20px rgba(220,38,38,0.1)",
+                border: "1px solid rgba(220,38,38,0.3)",
+                boxShadow: "0 0 24px rgba(220,38,38,0.08)",
               }}
             >
               <div className="flex items-center gap-2 mb-4">
