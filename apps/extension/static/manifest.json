@@ -19,7 +19,9 @@
     {
       "matches": [
         "https://cageid.app/*",
-        "http://localhost:3000/*"
+        "https://api.cageid.app/*",
+        "http://localhost:3000/*",
+        "http://localhost:3001/*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"
