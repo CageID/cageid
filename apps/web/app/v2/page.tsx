@@ -195,6 +195,76 @@ export default async function LandingPageV2() {
           </div>
         </div>
       </section>
+
+      {/* ─── Section 3: For Users ─────────────────────────────────── */}
+      <section className="py-24 sm:py-32 px-6 border-t border-cage-accent/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2
+                className="text-sm uppercase text-cage-accent mb-4"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
+              >
+                FOR USERS
+              </h2>
+              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px" }}>
+                Your ID is none of
+                <br />
+                their business.
+              </p>
+              <div className="space-y-4 text-cage-mid leading-relaxed">
+                <p>One verification works across every partner site. Install the browser extension and never see a verification screen again.</p>
+                <p>No personal data is ever shared with any site — they only learn that you meet their age requirement. Nothing else.</p>
+                <p>Delete your account and everything disappears. No traces, no records, no data broker honeypots.</p>
+              </div>
+            </div>
+
+            {/* Glass code block */}
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-2xl" style={{ background: "rgba(160,255,87,0.04)", filter: "blur(24px)" }} />
+              <div
+                className="relative rounded-xl overflow-hidden"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  border: "1px solid rgba(160,255,87,0.2)",
+                }}
+              >
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-cage-accent/10" style={{ background: "rgba(160,255,87,0.04)" }}>
+                  <div className="w-2.5 h-2.5 rounded-full bg-cage-error/60" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-cage-amber/60" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-cage-accent/60" />
+                  <span className="ml-2 text-xs text-cage-mid/60 font-mono" style={{ letterSpacing: "0px" }}>decoded_token.json</span>
+                </div>
+                <pre className="p-6 text-sm leading-relaxed font-mono overflow-x-auto" style={{ letterSpacing: "0px" }}>
+                  <code>
+                    <span className="text-cage-mid/50">{"{"}</span>{"\n"}
+                    <span className="text-cage-mid/50">{"  "}</span>
+                    <span className="text-cage-accent/80">&quot;age_verified&quot;</span>
+                    <span className="text-cage-mid/50">: </span>
+                    <span className="text-green-400">true</span>
+                    <span className="text-cage-mid/50">,</span>{"\n"}
+                    <span className="text-cage-mid/50">{"  "}</span>
+                    <span className="text-cage-accent/80">&quot;age_floor&quot;</span>
+                    <span className="text-cage-mid/50">:{" "}</span>
+                    <span className="text-amber-300">18</span>
+                    <span className="text-cage-mid/50">,</span>{"\n"}
+                    <span className="text-cage-mid/50">{"  "}</span>
+                    <span className="text-cage-accent/80">&quot;sub&quot;</span>
+                    <span className="text-cage-mid/50">:{" "}</span>
+                    <span className="text-cage-mid/70">&quot;anon_d945ddc7...&quot;</span>{"\n"}
+                    <span className="text-cage-mid/50">{"}"}</span>
+                  </code>
+                </pre>
+                <div className="px-6 pb-4">
+                  <p className="text-xs text-cage-mid/40 font-mono" style={{ letterSpacing: "0px" }}>↑ That&apos;s it. That&apos;s all they get.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
