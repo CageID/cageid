@@ -24,6 +24,10 @@ export default async function LandingPage() {
               style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
               PARTNERS
             </a>
+            <Link href="/pricing" className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
+              PRICING
+            </Link>
             <a href="#trust" className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
               style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}>
               TRUST
@@ -344,6 +348,14 @@ export default async function LandingPage() {
                   GET API ACCESS
                 </a>
               </div>
+              <Link
+                href="/pricing"
+                className="mt-3 text-sm text-cage-mid hover:text-cage-text-dark transition-colors inline-flex items-center gap-1"
+                style={{ letterSpacing: "-0.3px" }}
+              >
+                See pricing
+                <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </div>
