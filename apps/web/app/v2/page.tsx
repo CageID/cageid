@@ -265,6 +265,91 @@ export default async function LandingPageV2() {
           </div>
         </div>
       </section>
+
+      {/* ─── Section 4: For Partners ──────────────────────────────── */}
+      <section id="for-partners" className="py-24 sm:py-32 px-6 border-t border-cage-accent/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Glass code block */}
+            <div className="relative order-2 lg:order-1">
+              <div aria-hidden="true" className="absolute -inset-4 rounded-2xl" style={{ background: "rgba(160,255,87,0.04)", filter: "blur(24px)" }} />
+              <div
+                className="relative rounded-xl overflow-hidden"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  border: "1px solid rgba(160,255,87,0.2)",
+                }}
+              >
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-cage-accent/10" style={{ background: "rgba(160,255,87,0.04)" }}>
+                  <div className="w-2.5 h-2.5 rounded-full bg-cage-error/60" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-cage-amber/60" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-cage-accent/60" />
+                  <span className="ml-2 text-xs text-cage-mid/60 font-mono" style={{ letterSpacing: "0px" }}>integration.js</span>
+                </div>
+                <pre className="p-6 text-sm leading-relaxed font-mono overflow-x-auto" style={{ letterSpacing: "0px" }}>
+                  <code>
+                    <span className="text-cage-mid/50">{"// Add age-gating in 3 lines"}</span>{"\n"}
+                    <span className="text-purple-400">const</span>{" "}
+                    <span className="text-cage-text-dark">url</span>{" "}
+                    <span className="text-cage-mid/50">=</span>{"\n"}
+                    {"  "}<span className="text-amber-300">{"`https://cageid.app/api/oauth/authorize"}</span>{"\n"}
+                    {"  "}<span className="text-amber-300">{"?client_id=${CLIENT_ID}"}</span>{"\n"}
+                    {"  "}<span className="text-amber-300">{"&response_type=code`"}</span>
+                    <span className="text-cage-mid/50">;</span>{"\n\n"}
+                    <span className="text-purple-400">window</span>
+                    <span className="text-cage-mid/50">.</span>
+                    <span className="text-cage-text-dark">location</span>
+                    <span className="text-cage-mid/50">.</span>
+                    <span className="text-cage-text-dark">href</span>{" "}
+                    <span className="text-cage-mid/50">=</span>{" "}
+                    <span className="text-cage-text-dark">url</span>
+                    <span className="text-cage-mid/50">;</span>
+                  </code>
+                </pre>
+              </div>
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <h2
+                className="text-sm uppercase text-cage-accent mb-4"
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
+              >
+                FOR PARTNERS
+              </h2>
+              <p className="text-3xl sm:text-4xl font-bold mb-6 leading-tight" style={{ letterSpacing: "-1px" }}>
+                Add age verification in minutes, not months.
+              </p>
+              <div className="space-y-4 text-cage-mid leading-relaxed mb-8">
+                <p>Standard OAuth 2.0 / OpenID Connect. If your platform supports &ldquo;Sign in with Google,&rdquo; it supports CAGE.</p>
+                <p>No sensitive data to store or protect. No liability. Two age tiers: 18+ and 21+.</p>
+                <p>Works with any platform, any language, any framework.</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="#"
+                  className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-dark rounded-xl hover:brightness-110 transition-all"
+                  style={{
+                    fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em",
+                    background: "linear-gradient(135deg, #a0ff57, #6dff00)",
+                    boxShadow: "0 0 30px rgba(160,255,87,0.25)",
+                  }}
+                >
+                  READ THE DOCS
+                </a>
+                <a
+                  href="#"
+                  className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
+                  style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
+                >
+                  GET API ACCESS
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
