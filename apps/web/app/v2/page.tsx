@@ -155,7 +155,7 @@ export default async function LandingPageV2() {
               aria-hidden="true"
               className="hidden md:block absolute h-px"
               style={{
-                top: "28px",
+                top: "60px",
                 left: "calc(100% / 6)",
                 right: "calc(100% / 6)",
                 background: "linear-gradient(to right, transparent, rgba(160,255,87,0.2), rgba(160,255,87,0.6), rgba(160,255,87,0.2), transparent)",
