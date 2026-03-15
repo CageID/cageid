@@ -8,7 +8,6 @@
  * Note: Config values inlined — keep in sync with config.ts.
  */
 
-// TODO: Update to cageid.app / api.cageid.app when custom domains are configured.
 const STORAGE_KEYS = {
   SESSION_ID: 'cage_session_id',
   EMAIL: 'cage_email',

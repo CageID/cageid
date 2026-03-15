@@ -19,6 +19,7 @@
     {
       "matches": [
         "https://cageid.app/*",
+        "https://www.cageid.app/*",
         "https://api.cageid.app/*",
         "http://localhost:3000/*",
         "http://localhost:3001/*"
