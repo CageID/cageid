@@ -464,6 +464,61 @@ export default async function LandingPageV2() {
           </div>
         </div>
       </section>
+
+      {/* ─── Section 6: Footer CTA ────────────────────────────────── */}
+      <section
+        className="py-24 sm:py-32 px-6 border-t border-cage-accent/5 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(to bottom, rgba(160,255,87,0.06) 0%, transparent 60%)",
+        }}
+      >
+        <div className="max-w-2xl mx-auto text-center relative z-10">
+          <p className="text-3xl sm:text-4xl font-bold mb-8" style={{ letterSpacing: "-1px" }}>
+            Ready to verify once?
+          </p>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center px-10 py-4 text-base text-cage-dark rounded-xl hover:brightness-110 transition-all"
+              style={{
+                fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em",
+                background: "linear-gradient(135deg, #a0ff57, #6dff00)",
+                boxShadow: "0 0 60px rgba(160,255,87,0.25), 0 0 20px rgba(160,255,87,0.1)",
+              }}
+            >
+              GO TO DASHBOARD
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center px-10 py-4 text-base text-cage-dark rounded-xl hover:brightness-110 transition-all"
+              style={{
+                fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em",
+                background: "linear-gradient(135deg, #a0ff57, #6dff00)",
+                boxShadow: "0 0 60px rgba(160,255,87,0.25), 0 0 20px rgba(160,255,87,0.1)",
+              }}
+            >
+              GET STARTED
+            </Link>
+          )}
+        </div>
+      </section>
+
+      {/* ─── Footer ───────────────────────────────────────────────── */}
+      <footer className="py-8 px-6 border-t border-cage-accent/5">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <CageLogo className="h-5 w-auto" />
+            <span className="text-xs text-cage-mid/50">Confirmed Age, Granted Entry</span>
+          </div>
+          <div className="flex items-center gap-6 text-xs text-cage-mid/50">
+            <a href="#" className="hover:text-cage-text-dark transition-colors">About</a>
+            <a href="#" className="hover:text-cage-text-dark transition-colors">Privacy</a>
+            <a href="#" className="hover:text-cage-text-dark transition-colors">Docs</a>
+            <a href="https://github.com/CageID/cageid" className="hover:text-cage-text-dark transition-colors">GitHub</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
