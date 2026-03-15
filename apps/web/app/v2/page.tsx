@@ -221,7 +221,7 @@ export default async function LandingPageV2() {
 
             {/* Glass code block */}
             <div className="relative">
-              <div className="absolute -inset-4 rounded-2xl" style={{ background: "rgba(160,255,87,0.04)", filter: "blur(24px)" }} />
+              <div aria-hidden="true" className="absolute -inset-4 rounded-2xl" style={{ background: "rgba(160,255,87,0.04)", filter: "blur(24px)" }} />
               <div
                 className="relative rounded-xl overflow-hidden"
                 style={{
