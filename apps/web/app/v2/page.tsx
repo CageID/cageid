@@ -135,6 +135,66 @@ export default async function LandingPageV2() {
           </svg>
         </div>
       </section>
+
+      {/* ─── Section 2: How It Works ──────────────────────────────── */}
+      <section id="how-it-works" className="py-24 sm:py-32 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2
+            className="text-sm uppercase text-cage-accent mb-4 text-center"
+            style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
+          >
+            HOW IT WORKS
+          </h2>
+          <p className="text-3xl sm:text-4xl font-bold text-center mb-16 max-w-2xl mx-auto" style={{ letterSpacing: "-1px" }}>
+            Three steps. Sixty seconds. Never again.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 relative">
+            {/* Glowing connecting line (desktop only) */}
+            <div
+              aria-hidden="true"
+              className="hidden md:block absolute h-px"
+              style={{
+                top: "28px",
+                left: "calc(100% / 6)",
+                right: "calc(100% / 6)",
+                background: "linear-gradient(to right, transparent, rgba(160,255,87,0.2), rgba(160,255,87,0.6), rgba(160,255,87,0.2), transparent)",
+                boxShadow: "0 0 8px rgba(160,255,87,0.3)",
+              }}
+            />
+
+            {[
+              { n: "1", title: "Verify once", desc: "Scan your government ID through our secure partner Veriff. Takes 60 seconds." },
+              { n: "2", title: "CAGE forgets your ID", desc: "We store only that you're 18+ or 21+. No name, no birthday, no document." },
+              { n: "3", title: "Use it everywhere", desc: "Sites check your age instantly and anonymously. You never re-verify." },
+            ].map(({ n, title, desc }) => (
+              <div
+                key={n}
+                className="relative text-center group rounded-2xl p-8"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6 text-cage-accent font-mono text-lg font-bold relative z-10 transition-all group-hover:scale-105"
+                  style={{
+                    background: "rgba(160,255,87,0.08)",
+                    border: "1px solid rgba(160,255,87,0.3)",
+                    boxShadow: "0 0 0 4px rgba(160,255,87,0.05)",
+                  }}
+                >
+                  {n}
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{title}</h3>
+                <p className="text-sm text-cage-mid leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
