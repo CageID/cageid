@@ -45,29 +45,29 @@ export default async function LandingPage() {
     <div className="bg-cage-bg-dark text-cage-text-dark min-h-screen" style={{ letterSpacing: "-0.5px" }}>
       {/* ─── Nav ──────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-cage-bg-dark/80 border-b border-cage-accent/10">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-28 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <CageLogo className="h-8 w-auto" />
+            <CageLogo className="h-24 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <a
               href="#how-it-works"
               className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               HOW IT WORKS
             </a>
             <a
               href="#for-partners"
               className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               PARTNERS
             </a>
             <a
               href="#trust"
               className="text-sm text-cage-mid hover:text-cage-text-dark transition-colors hidden sm:block"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               TRUST
             </a>
@@ -75,7 +75,7 @@ export default async function LandingPage() {
               <Link
                 href="/dashboard"
                 className="text-sm text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
-                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
               >
                 DASHBOARD
               </Link>
@@ -83,7 +83,7 @@ export default async function LandingPage() {
               <Link
                 href="/login"
                 className="text-sm text-cage-dark bg-cage-accent px-4 py-2 rounded-lg hover:brightness-110 transition"
-                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
               >
                 SIGN IN
               </Link>
@@ -136,7 +136,7 @@ export default async function LandingPage() {
               <Link
                 href="/dashboard"
                 className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_30px_rgba(160,255,87,0.2)]"
-                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
               >
                 DASHBOARD
               </Link>
@@ -144,7 +144,7 @@ export default async function LandingPage() {
               <Link
                 href="/login"
                 className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_30px_rgba(160,255,87,0.2)]"
-                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
               >
                 GET VERIFIED
               </Link>
@@ -152,14 +152,14 @@ export default async function LandingPage() {
             <a
               href="#"
               className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               INSTALL EXTENSION
             </a>
             <a
               href="#for-partners"
               className="inline-flex items-center justify-center px-8 py-3.5 text-base text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               FOR PARTNERS
             </a>
@@ -187,7 +187,7 @@ export default async function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <h2
             className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4 text-center"
-            style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+            style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
           >
             HOW IT WORKS
           </h2>
@@ -254,7 +254,7 @@ export default async function LandingPage() {
             <div>
               <h2
                 className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4"
-                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
               >
                 FOR USERS
               </h2>
@@ -395,7 +395,7 @@ export default async function LandingPage() {
             <div className="order-1 lg:order-2">
               <h2
                 className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4"
-                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
               >
                 FOR PARTNERS
               </h2>
@@ -417,14 +417,14 @@ export default async function LandingPage() {
                 <a
                   href="#"
                   className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all"
-                  style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                  style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
                 >
                   READ THE DOCS
                 </a>
                 <a
                   href="#"
                   className="inline-flex items-center justify-center px-6 py-3 text-sm text-cage-mid border border-cage-mid/30 rounded-xl hover:border-cage-accent/50 hover:text-cage-text-dark transition-all"
-                  style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+                  style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
                 >
                   GET API ACCESS
                 </a>
@@ -442,7 +442,7 @@ export default async function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <h2
             className="text-sm uppercase tracking-[0.2em] text-cage-accent mb-4 text-center"
-            style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+            style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
           >
             TRUST
           </h2>
@@ -599,7 +599,7 @@ export default async function LandingPage() {
             <Link
               href="/dashboard"
               className="inline-flex items-center justify-center px-10 py-4 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_40px_rgba(160,255,87,0.15)]"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               GO TO DASHBOARD
             </Link>
@@ -607,7 +607,7 @@ export default async function LandingPage() {
             <Link
               href="/login"
               className="inline-flex items-center justify-center px-10 py-4 text-base text-cage-dark bg-cage-accent rounded-xl hover:brightness-110 transition-all shadow-[0_0_40px_rgba(160,255,87,0.15)]"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px" }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 650, letterSpacing: "1px", fontSize: "0.8em" }}
             >
               GET STARTED
             </Link>
