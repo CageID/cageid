@@ -63,9 +63,9 @@ export default function AboutPage() {
           </h2>
           <div className="space-y-4 text-cage-mid leading-relaxed" style={{ letterSpacing: "-0.2px" }}>
             <p>Every website that needs to verify age makes users upload a government ID. That means dozens of companies storing sensitive identity documents — each one a breach waiting to happen.</p>
-            <p>Users have no visibility into where their data ends up, how long it's kept, or who has access to it. A driver's license submitted for one site might sit on servers you've never heard of.</p>
-            <p>And despite all this friction, young people still access age-restricted content — because the verification experience is so bad that many sites don't bother enforcing it.</p>
-            <p>The current system is broken for everyone: it's invasive for users, liability-heavy for sites, and ineffective at its stated goal.</p>
+            <p>Users have no visibility into where their data ends up, how long it&apos;s kept, or who has access to it. A driver&apos;s license submitted for one site might sit on servers you&apos;ve never heard of.</p>
+            <p>And despite all this friction, young people still access age-restricted content — because the verification experience is so bad that many sites don&apos;t bother enforcing it.</p>
+            <p>The current system is broken for everyone: it&apos;s invasive for users, liability-heavy for sites, and ineffective at its stated goal.</p>
           </div>
         </section>
 
@@ -78,7 +78,7 @@ export default function AboutPage() {
             <p>What if you only had to verify your age once?</p>
             <p>What if the sites that need your age never saw your ID?</p>
             <p>What if the whole thing was invisible after the first time?</p>
-            <p className="text-cage-text-dark font-medium">That's CAGE: Confirmed Age, Granted Entry.</p>
+            <p className="text-cage-text-dark font-medium">That&apos;s CAGE: Confirmed Age, Granted Entry.</p>
             <p>Verify once. Use everywhere. No repeat uploads. No site ever sees your documents. Your identity stays yours.</p>
           </div>
         </section>
