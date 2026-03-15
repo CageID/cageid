@@ -17,6 +17,21 @@ const NAV_LINK = {
   fontSize: "0.8em",
 } as const;
 
+const CHECK_ICON = (
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    className="text-cage-accent mt-0.5 shrink-0"
+    aria-hidden="true"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
 const tiers = [
   {
     name: "Starter",
@@ -279,18 +294,7 @@ export default function PricingPage() {
                 <ul className="space-y-2.5 mb-8 flex-1">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm">
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        className="text-cage-accent mt-0.5 shrink-0"
-                        aria-hidden="true"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
+                      {CHECK_ICON}
                       <span className="text-cage-text-dark/80">{f}</span>
                     </li>
                   ))}
@@ -357,18 +361,7 @@ export default function PricingPage() {
                   "Custom integration support",
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      className="text-cage-accent mt-0.5 shrink-0"
-                      aria-hidden="true"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    {CHECK_ICON}
                     <span className="text-cage-text-dark/80">{f}</span>
                   </li>
                 ))}
